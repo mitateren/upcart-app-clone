@@ -13,5 +13,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     await db.session.deleteMany({ where: { shop } });
   }
 
+  const shopRecord = await db.shop.findUnique({ where: { domain: shop } });
+  if (shopRecord) {
+    await db.analyticsEvent.deleteMany({ where: { shopId: shopRecord.id } });
+    await db.discountRule.deleteMany({ where: { shopId: shopRecord.id } });
+    await db.cart.deleteMany({ where: { shopId: shopRecord.id } });
+    await db.shop.delete({ where: { id: shopRecord.id } });
+  }
+
   return new Response();
 };

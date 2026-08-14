@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UpCard Drawer Smoke</title>
+  <link rel="stylesheet" href="../extensions/upcard-cart/assets/upcard-drawer.css" />
+  <style>body{font-family:system-ui;padding:24px}button{margin:8px 8px 0 0;padding:10px 14px}</style>
+</head>
+<body>
+  <h1>UpCard local smoke</h1>
+  <a href="/cart" id="cart-link">Cart icon</a>
+  <form action="/cart/add" method="post">
+    <button type="submit" name="add">Add to cart</button>
+  </form>
+  <pre id="log"></pre>
+  <script>
+    window.UpCardBootstrap = {
+      shop: "smoke.myshopify.com",
+      moneyFormat: "${{amount}}",
+      currency: "USD",
+      cartItemCount: 0,
+      configUrl: "/mock-config",
+      analyticsUrl: "/mock-analytics",
+      rootUrl: "/",
+      cartUrl: "/cart",
+      cartAddUrl: "/cart/add",
+      cartChangeUrl: "/cart/change",
+      cartUpdateUrl: "/cart/update"
+    };
+
+    const cartState = {
+      item_count: 1,
+      items_subtotal_price: 4999,
+      total_price: 4999,
+      note: "",
+      items: [{
+        key: "1:abc",
+        id: 1,
+        quantity: 1,
+        product_id: 101,
+        variant_id: 201,
+        product_title: "Smoke Product",
+        variant_title: "Default Title",
+        image: "",
+        line_price: 4999,
+        final_line_price: 4999,
+        original_line_price: 5999,
+        options_with_values: []
+      }]
+    };
+
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async function(url, opts) {
+      const u = String(url);
+      const log = document.getElementById("log");
+      log.textContent += "fetch " + u + "\n";
+
+      if (u.includes("mock-config") || u.includes("/apps/upcard/config")) {
+        return new Response(JSON.stringify({
+          cartId: "smoke-cart",
+          config: {
+            design: {
+              enabled: true,
+              backgroundColor: "#ffffff",
+              textColor: "#111111",
+              buttonBackground: "#111111",
+              buttonTextColor: "#ffffff",
+              accentColor: "#0a7c5e",
+              borderRadius: 8,
+              showStrikethroughPrices: true,
+              showSavingsBelowPrices: true,
+              fontFamily: "inherit"
+            },
+            header: { enabled: true, title: "Smoke cart", showItemCount: true, showLogo: false, logoUrl: "", closeButtonStyle: "x" },
+            announcements: { enabled: true, text: "Offer ends in {TIMER}", backgroundColor: "#111", textColor: "#fff", timerMinutes: 15, showTimer: true },
+            rewards: {
+              enabled: true,
+              basis: "cart_total",
+              barColor: "#0a7c5e",
+              backgroundColor: "#e8f5f0",
+              completedText: "Done!",
+              tiers: [{ id: "t1", threshold: 75, type: "shipping", textBefore: "Add {remaining} for free shipping", textAfter: "Free shipping!" }]
+            },
+            upsells: { enabled: false, title: "Also", addButtonLabel: "Add", useAi: false, algorithm: "related", smartVariantMatching: true, manualProductIds: [], maxItems: 4 },
+            recommendations: { enabled: false, title: "Popular", emptyCartOnly: true, maxItems: 4 },
+            addons: { enabled: false, mode: "product", title: "", description: "", productVariantId: "", productTitle: "", shippingTiers: [] },
+            discountCodes: { enabled: true, placeholder: "Code", buttonLabel: "Apply" },
+            expressPayments: { enabled: false, alignment: "stretch" },
+            trustBadges: { enabled: false, position: "bottom", imageUrl: "", alt: "" },
+            additionalNotes: { enabled: true, label: "Notes", placeholder: "…", required: false },
+            subscriptionUpgrades: { enabled: false, title: "", oneTimeLabel: "", subscribeLabel: "" },
+            stickyCart: { enabled: true, position: "bottom-right", backgroundColor: "#111", iconColor: "#fff", showCount: true },
+            behavior: {
+              openOnAddToCart: true,
+              position: "right",
+              openCartSelectors: "a[href='/cart']",
+              addToCartSelectors: "[name='add']",
+              shadowDom: false,
+              continueShopping: true,
+              continueShoppingLabel: "Continue shopping",
+              goToCartOnCheckout: false,
+              disableFixedFooter: false
+            },
+            customCss: "",
+            customHtml: { beforeAnnouncements: "", betweenItems: "", aboveCheckout: "", scripts: "" },
+            translations: { emptyCart: "Empty", subtotal: "Subtotal", savings: "Saving", checkout: "Checkout", remove: "Remove" }
+          },
+          carts: [],
+          discountRules: []
+        }), { headers: { "Content-Type": "application/json" } });
+      }
+
+      if (u.includes("cart.js") || u.endsWith("/cart.js") || /\/cart\.js/.test(u)) {
+        return new Response(JSON.stringify(cartState), { headers: { "Content-Type": "application/json" } });
+      }
+      if (u.includes("/cart/change") || u.includes("/cart/update") || u.includes("/cart/add")) {
+        return new Response(JSON.stringify(cartState), { headers: { "Content-Type": "application/json" } });
+      }
+      if (u.includes("mock-analytics") || u.includes("analytics")) {
+        return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      }
+      if (u.includes("recommendations")) {
+        return new Response(JSON.stringify({ products: [] }), { headers: { "Content-Type": "application/json" } });
+      }
+      return originalFetch(url, opts);
+    };
+  </script>
+  <script src="../extensions/upcard-cart/assets/upcard-drawer.js"></script>
+  <script>
+    async function runSmoke() {
+      const log = document.getElementById("log");
+      for (let i = 0; i < 50; i++) {
+        if (window.UpCard && window.UpCard.open) break;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      const hasApi = !!(window.UpCard && window.UpCard.open);
+      const sticky = !!document.querySelector(".upcard-sticky");
+      log.textContent += "UpCard API: " + hasApi + "\n";
+      log.textContent += "Sticky: " + sticky + "\n";
+      if (!hasApi) {
+        document.body.setAttribute("data-smoke", "fail-api");
+        window.__UPCARD_SMOKE__ = { ok: false, api: false, sticky: sticky };
+        return;
+      }
+      window.UpCard.open();
+      await new Promise((r) => setTimeout(r, 900));
+      const open = !!document.querySelector(".upcard-drawer.is-open");
+      const titleEl = document.querySelector(".upcard-header__title");
+      const title = titleEl ? titleEl.textContent.trim() : "";
+      const rewards = !!document.querySelector(".upcard-rewards");
+      const item = !!document.querySelector(".upcard-item");
+      const announcement = !!document.querySelector(".upcard-announcement");
+      const checkout = !!document.querySelector("[data-upcard-checkout]");
+      const discount = !!document.querySelector("[data-upcard-discount]");
+      const notes = !!document.querySelector("[data-upcard-notes]");
+      log.textContent += "Drawer open: " + open + "\n";
+      log.textContent += "Title: " + title + "\n";
+      log.textContent += "Rewards: " + rewards + " item: " + item + "\n";
+
+      document.querySelector("[data-upcard-close]")?.click();
+      await new Promise((r) => setTimeout(r, 400));
+      const closed = !document.querySelector(".upcard-drawer.is-open");
+      document.querySelector(".upcard-sticky")?.click();
+      await new Promise((r) => setTimeout(r, 500));
+      const reopened = !!document.querySelector(".upcard-drawer.is-open");
+
+      const ok =
+        hasApi && sticky && open && title.includes("Smoke") && rewards && item &&
+        announcement && checkout && discount && notes && closed && reopened;
+      window.__UPCARD_SMOKE__ = {
+        ok: ok,
+        api: hasApi,
+        sticky: sticky,
+        open: open,
+        title: title,
+        rewards: rewards,
+        item: item,
+        announcement: announcement,
+        checkout: checkout,
+        discount: discount,
+        notes: notes,
+        closed: closed,
+        reopenedViaSticky: reopened
+      };
+      document.body.setAttribute("data-smoke", ok ? "pass" : "fail");
+      log.textContent += "RESULT: " + (ok ? "PASS" : "FAIL") + "\n";
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => setTimeout(runSmoke, 200));
+    } else {
+      setTimeout(runSmoke, 200);
+    }
+  </script>
+</body>
+</html>

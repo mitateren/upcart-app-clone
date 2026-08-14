@@ -1,0 +1,487 @@
+:root {
+  --upcard-bg: #ffffff;
+  --upcard-text: #111111;
+  --upcard-btn-bg: #111111;
+  --upcard-btn-text: #ffffff;
+  --upcard-accent: #0a7c5e;
+  --upcard-radius: 8px;
+  --upcard-font: inherit;
+  --upcard-z: 2147483000;
+}
+
+.upcard-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: var(--upcard-z);
+}
+
+.upcard-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.upcard-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  background: var(--upcard-bg);
+  color: var(--upcard-text);
+  font-family: var(--upcard-font);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: calc(var(--upcard-z) + 1);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.18);
+}
+
+.upcard-drawer[data-position="left"] {
+  left: 0;
+  right: auto;
+  transform: translateX(-100%);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.18);
+}
+
+.upcard-drawer[data-position="right"] {
+  right: 0;
+}
+
+.upcard-drawer.is-open {
+  transform: translateX(0);
+}
+
+.upcard-drawer[data-position="left"].is-open {
+  transform: translateX(0);
+}
+
+.upcard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 12px;
+}
+
+.upcard-header__title {
+  font-size: 1.1rem;
+  font-weight: 650;
+  margin: 0;
+}
+
+.upcard-header__count {
+  opacity: 0.65;
+  font-size: 0.9rem;
+  margin-left: 6px;
+}
+
+.upcard-close {
+  border: 0;
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  padding: 4px 8px;
+}
+
+.upcard-announcement {
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.upcard-rewards {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.upcard-rewards__text {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.upcard-rewards__track {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.upcard-rewards__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.upcard-body {
+  flex: 1;
+  overflow: auto;
+  padding: 12px 16px 20px;
+}
+
+.upcard-empty {
+  text-align: center;
+  padding: 48px 16px;
+  opacity: 0.7;
+}
+
+.upcard-item {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.upcard-item__image {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--upcard-radius);
+  background: #f3f3f3;
+}
+
+.upcard-item__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+}
+
+.upcard-item__variant {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  margin-bottom: 6px;
+}
+
+.upcard-item__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.upcard-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--upcard-radius);
+  overflow: hidden;
+}
+
+.upcard-qty button {
+  border: 0;
+  background: transparent;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.upcard-qty span {
+  min-width: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.upcard-price {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.upcard-price__compare {
+  text-decoration: line-through;
+  opacity: 0.5;
+  margin-right: 6px;
+  font-weight: 400;
+}
+
+.upcard-savings {
+  color: var(--upcard-accent);
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.upcard-remove {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.upcard-section-title {
+  font-size: 0.95rem;
+  font-weight: 650;
+  margin: 16px 0 10px;
+}
+
+.upcard-upsells {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
+}
+
+.upcard-upsell-card {
+  flex: 0 0 140px;
+  scroll-snap-align: start;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--upcard-radius);
+  padding: 8px;
+  background: #fafafa;
+}
+
+.upcard-upsell-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: calc(var(--upcard-radius) - 2px);
+  background: #eee;
+}
+
+.upcard-upsell-card__title {
+  font-size: 0.78rem;
+  margin: 6px 0 4px;
+  line-height: 1.3;
+  min-height: 2.4em;
+}
+
+.upcard-upsell-card__price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.upcard-notes,
+.upcard-discount {
+  margin-top: 14px;
+}
+
+.upcard-notes label,
+.upcard-discount label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.upcard-notes textarea,
+.upcard-discount input {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--upcard-radius);
+  padding: 10px 12px;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.upcard-discount__row {
+  display: flex;
+  gap: 8px;
+}
+
+.upcard-discount__row input {
+  flex: 1;
+}
+
+.upcard-addon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--upcard-radius);
+}
+
+.upcard-addon__meta {
+  font-size: 0.85rem;
+}
+
+.upcard-addon__desc {
+  opacity: 0.65;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.upcard-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.upcard-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.upcard-switch span {
+  position: absolute;
+  inset: 0;
+  background: #ccc;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.upcard-switch span::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.upcard-switch input:checked + span {
+  background: var(--upcard-accent);
+}
+
+.upcard-switch input:checked + span::before {
+  transform: translateX(20px);
+}
+
+.upcard-trust {
+  text-align: center;
+  margin: 12px 0;
+}
+
+.upcard-trust img {
+  max-width: 100%;
+  height: auto;
+}
+
+.upcard-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 14px 16px 18px;
+  background: var(--upcard-bg);
+}
+
+.upcard-footer.is-fixed {
+  position: sticky;
+  bottom: 0;
+}
+
+.upcard-footer__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.upcard-footer__savings {
+  color: var(--upcard-accent);
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.upcard-btn {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: var(--upcard-radius);
+  background: var(--upcard-btn-bg);
+  color: var(--upcard-btn-text);
+  padding: 14px 16px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.upcard-btn--secondary {
+  background: transparent;
+  color: var(--upcard-text);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+}
+
+.upcard-btn--small {
+  padding: 8px 10px;
+  font-size: 0.8rem;
+}
+
+.upcard-express {
+  margin-top: 10px;
+}
+
+.upcard-express[data-align="center"] {
+  text-align: center;
+}
+
+.upcard-express[data-align="right"] {
+  text-align: right;
+}
+
+.upcard-sticky {
+  position: fixed;
+  z-index: calc(var(--upcard-z) - 1);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upcard-sticky[data-position="bottom-right"] {
+  right: 20px;
+  bottom: 20px;
+}
+
+.upcard-sticky[data-position="bottom-left"] {
+  left: 20px;
+  bottom: 20px;
+}
+
+.upcard-sticky__count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--upcard-accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.upcard-drawer[hidden],
+.upcard-overlay[hidden],
+.upcard-sticky[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  .upcard-drawer {
+    width: 100vw;
+  }
+}

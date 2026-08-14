@@ -1,0 +1,8 @@
+{
+  "name": "UpCard Cart",
+  "settings": {
+    "enabled": {
+      "label": "Enable UpCard cart drawer"
+    }
+  }
+}

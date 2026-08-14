@@ -1,0 +1,10 @@
+{
+  "name": {
+    "message": "UpCard Cart"
+  },
+  "settings": {
+    "enabled": {
+      "label": "UpCard sepet çekmecesini etkinleştir"
+    }
+  }
+}

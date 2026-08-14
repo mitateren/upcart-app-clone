@@ -1,0 +1,35 @@
+{% comment %} UpCard Bridge — Theme App Embed {% endcomment %}
+{% if block.settings.enabled %}
+<script>
+  window.UpCardBootstrap = {
+    shop: {{ shop.permanent_domain | json }},
+    moneyFormat: {{ shop.money_format | json }},
+    currency: {{ cart.currency.iso_code | json }},
+    cartItemCount: {{ cart.item_count | json }},
+    configUrl: {{ '/apps/upcard/config' | json }},
+    analyticsUrl: {{ '/apps/upcard/analytics' | json }},
+    rootUrl: {{ routes.root_url | json }},
+    cartUrl: {{ routes.cart_url | json }},
+    cartAddUrl: {{ routes.cart_add_url | json }},
+    cartChangeUrl: {{ routes.cart_change_url | json }},
+    cartUpdateUrl: {{ routes.cart_update_url | json }}
+  };
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "UpCard Bridge",
+  "target": "body",
+  "stylesheet": "upcard-drawer.css",
+  "javascript": "upcard-drawer.js",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Enable UpCard cart drawer",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
