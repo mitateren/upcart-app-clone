@@ -37,7 +37,8 @@ if (host === "localhost") {
 
 export default defineConfig({
   server: {
-    allowedHosts: [host],
+    // Cloudflare / Shopify CLI tunnels rotate hostnames; allow all tunnel hosts.
+    allowedHosts: true,
     cors: {
       preflightContinue: true,
     },

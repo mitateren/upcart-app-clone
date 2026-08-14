@@ -1,14 +1,19 @@
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration
-name = "UpCard"
-client_id = ""
-application_url = "https://localhost"
-embedded = true
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-[build]
-automatically_update_urls_on_dev = true
+client_id = "bf5472c84b033938e4f3cf3e9abd7eaa"
+application_url = "https://example.com"
+embedded = true
+name = "UpCard"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_discounts,read_locales,read_orders,read_products,read_themes,write_discounts,write_files,write_products,write_translations"
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
 
 [webhooks]
-api_version = "2026-07"
+api_version = "2026-10"
 
   [[webhooks.subscriptions]]
   uri = "/webhooks/app/uninstalled"
@@ -18,21 +23,18 @@ api_version = "2026-07"
   topics = ["app/scopes_update"]
   uri = "/webhooks/app/scopes_update"
 
-[access_scopes]
-scopes = "read_products,write_products,read_discounts,write_discounts,read_orders,write_files,read_themes,write_translations,read_locales"
-
-[auth]
-redirect_urls = ["https://localhost/api/auth"]
-
 [app_proxy]
-url = "https://localhost/api/proxy"
+url = "/api/proxy"
 subpath = "upcard"
 prefix = "apps"
 
-# Live cart config for storefront
 [shop.metafields.app.live_cart_config]
 type = "json"
 name = "UpCard Live Cart Config"
 description = "Published UpCard cart drawer configuration"
 access.admin = "merchant_read_write"
 access.storefront = "public_read"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
