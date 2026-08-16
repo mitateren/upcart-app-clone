@@ -16,6 +16,7 @@ database.sqlite
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Keep lockfile for reproducible deploys (Render/Docker)
 # package-lock.json
@@ -24,6 +25,9 @@ yarn.lock
 pnpm-lock.yaml
 
 /extensions/*/dist
+/logs
+/prisma/prod.sqlite
+/prisma/prod.sqlite-journal
 
 # Ignore shopify files created during app dev
 .shopify/*

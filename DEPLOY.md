@@ -1,48 +1,97 @@
-# UpCard production (canlı) kurulum
+# UpCard — Plesk (Windows) kurulum
 
-`example.com` / Example Domain = App URL henüz canlı host’a bağlanmamış demektir.
+RDP gerekmez. Plesk panel + HTTPS subdomain yeterli.
+Hosting planında **Node.js** desteği açık olmalı (Plesk → Extensions → Node.js).
 
-## 1) Render’da servis
+## 0) Kontrol
 
-1. https://dashboard.render.com → **New → Blueprint** (veya Web Service)
-2. Repo: `https://github.com/tisortgetir/upcart-app-clone`
-3. Branch: `main-cli`
-4. `render.yaml` otomatik `upcard-app` servisini tanımlar
-5. Environment variables (zorunlu):
-   - `SHOPIFY_API_KEY` = `bf5472c84b033938e4f3cf3e9abd7eaa`
-   - `SHOPIFY_API_SECRET` = Partner Dashboard → UpCard → **Client secret**
-   - `SHOPIFY_APP_URL` = `https://upcard-app.onrender.com` (Render URL farklıysa onu yaz)
-6. Deploy bitene kadar bekle (ilk build ~5–10 dk)
+Plesk’te domain/subdomain altında **Node.js** sekmesi var mı?
 
-Client secret:
-https://dev.shopify.com/dashboard/225511547/apps/bf5472c84b033938e4f3cf3e9abd7eaa/settings
+- **Yoksa** → plan Node desteklemiyor; bu app kurulamaz (ASP.NET yetmez).
+- **Varsa** → aşağıdaki adımlara devam.
 
-## 2) Shopify App URL’lerini kaydet
+## 1) Subdomain
 
-Proje kökünde (Client secret gerekmez, sadece CLI login):
+Örnek: `upcard.tisortgetir.com`
 
-```bash
-cd C:\wwwroot\shopifyApp_UpCard
-shopify app deploy
+- DNS A kaydı hosting IP’ne
+- Plesk’te subdomain oluştur
+- SSL (Let’s Encrypt) aç
+
+## 2) Dosyaları yükle
+
+Git veya FTP ile proje kökünü subdomain document root’una koy:
+
+Örnek path: `C:\Inetpub\vhosts\...\upcard.tisortgetir.com\httpdocs\`  
+veya Plesk’in gösterdiği Application root.
+
+Gerekli klasörler: `app`, `build` (build sonrası), `prisma`, `public`, `node_modules` (npm sonrası), `package.json`, `server.js`, `shopify.app.toml`, `.env`
+
+## 3) `.env` (Plesk Node.js → Custom environment variables veya dosya)
+
+```env
+NODE_ENV=production
+SHOPIFY_API_KEY=bf5472c84b033938e4f3cf3e9abd7eaa
+SHOPIFY_API_SECRET=PARTNER_CLIENT_SECRET
+SHOPIFY_APP_URL=https://upcard.SENIN-DOMAIN.com
+SCOPES=read_discounts,read_locales,read_orders,read_products,read_themes,write_discounts,write_files,write_products,write_translations
+DATABASE_URL=file:./prisma/prod.sqlite
 ```
 
-Bu komut `shopify.app.toml` içindeki URL’leri Partner’a yazar + theme extension’ı yayınlar.
+Secret: Partner Dashboard → UpCard → Client credentials.
 
-Render URL’n `upcard-app.onrender.com` değilse önce `shopify.app.toml` içindeki tüm URL’leri kendi Render domain’inle değiştir.
+## 4) Plesk Node.js ayarları
 
-## 3) Mağazaya kur / yeniden aç
+Domain → **Node.js** → Enable:
 
-https://admin.shopify.com/store/tisort-getir/apps/upcard
+| Ayar | Değer |
+|------|--------|
+| Node.js version | 20.x veya 22.x |
+| Package manager | npm |
+| Application mode | production |
+| Application root | proje kökü (package.json’un olduğu yer) |
+| Application startup file | `server.js` |
+| Application URL | `/` |
 
-Hâlâ Example Domain görürsen:
-- Render deploy yeşil mi?
-- Partner’da Application URL `https://upcard-app.onrender.com` mi?
-- App’i kaldırıp tekrar kur (URL değişince gerekir)
+Sonra Plesk’te:
 
-## 4) Storefront drawer
+1. **NPM Install**
+2. SSH veya “Run script” varsa:
+   ```bash
+   npm run build
+   npx prisma generate
+   npx prisma migrate deploy
+   ```
+3. Node.js uygulamasını **Restart / Enable**
 
-**Online Store → Themes → Customize → App embeds → UpCard Bridge** aç → Save
+SSH yoksa: bilgisayarında `npm run build` yapıp `build/` klasörünü FTP ile yükle; sunucuda sadece `npm ci --omit=dev`, `npx prisma generate`, `npx prisma migrate deploy` çalıştır (Plesk bazen “Run npm script” sunar).
+
+## 5) Shopify’a bağla
+
+Bilgisayarında (CLI):
+
+1. `shopify.app.toml` içinde tüm URL’leri `https://upcard.SENIN-DOMAIN.com` yap
+2. ```bash
+   shopify app deploy --allow-updates
+   ```
+
+## 6) Mağaza
+
+https://admin.shopify.com/store/tisort-getir/apps/upcard  
+
+Example Domain gitmeli.  
+Themes → App embeds → **UpCard Bridge** aç.
+
+## Sık hatalar
+
+| Belirti | Çözüm |
+|---------|--------|
+| Node.js sekmesi yok | Hosting’e Node eklet veya Railway/Fly kullan |
+| 502 / app açılmıyor | `build/` yüklü mü, Node Restart, loglara bak |
+| Example Domain | `SHOPIFY_APP_URL` + Partner App URL yanlış/eski |
+| Prisma hata | `DATABASE_URL` yazılabilir klasöre işaret etmeli |
+| Package engine hatası | Plesk Node 20+ seç |
 
 ## Not
 
-`shopify app dev` sadece development (tunnel). Canlı mağaza (`tisort-getir`) için Render + `shopify app deploy` şart.
+`web.config` (IIS HttpPlatform) Plesk Node.js modunda genelde gerekmez; Plesk kendi process manager’ını kullanır. Startup file: **`server.js`**.
