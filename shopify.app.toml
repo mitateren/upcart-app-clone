@@ -1,16 +1,19 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "bf5472c84b033938e4f3cf3e9abd7eaa"
-application_url = "https://example.com"
-embedded = true
 name = "UpCard"
+application_url = "https://upcard-app.onrender.com"
+embedded = true
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_discounts,read_locales,read_orders,read_products,read_themes,write_discounts,write_files,write_products,write_translations"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://upcard-app.onrender.com/auth/callback",
+  "https://upcard-app.onrender.com/auth/shopify/callback",
+  "https://upcard-app.onrender.com/api/auth/callback"
+]
 
 [webhooks]
 api_version = "2026-10"
@@ -24,7 +27,7 @@ api_version = "2026-10"
   uri = "/webhooks/app/scopes_update"
 
 [app_proxy]
-url = "/api/proxy"
+url = "https://upcard-app.onrender.com/api/proxy"
 subpath = "upcard"
 prefix = "apps"
 
