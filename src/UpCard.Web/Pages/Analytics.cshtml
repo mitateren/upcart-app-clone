@@ -1,0 +1,33 @@
+@page
+@model AnalyticsModel
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<h1 class="uc-page-title">Analytics</h1>
+<p class="uc-page-sub">Son @Model.Days gün · Upcart tarzı cart funnel metrikleri</p>
+
+<div class="uc-grid uc-grid-3" style="margin-bottom:16px">
+    <div class="uc-card uc-metric"><div class="label">Cart opens</div><div class="value">@Model.Opens</div></div>
+    <div class="uc-card uc-metric"><div class="label">Upsell adds</div><div class="value">@Model.Upsells</div></div>
+    <div class="uc-card uc-metric"><div class="label">Checkout clicks</div><div class="value">@Model.Checkouts</div></div>
+    <div class="uc-card uc-metric"><div class="label">Upsell CTR</div><div class="value">@Model.UpsellCtr%</div></div>
+    <div class="uc-card uc-metric"><div class="label">Checkout rate</div><div class="value">@Model.CheckoutRate%</div></div>
+    <div class="uc-card uc-metric"><div class="label">Rewards unlocked</div><div class="value">@Model.RewardReached</div></div>
+</div>
+
+<div class="uc-card">
+    <div class="uc-card-hd"><h2>Event types</h2></div>
+    <div class="uc-card-bd">
+        <table class="uc-table">
+            <thead><tr><th>Event</th><th>Count</th></tr></thead>
+            <tbody>
+            <tr><td>open</td><td>@Model.Opens</td></tr>
+            <tr><td>add_upsell</td><td>@Model.Upsells</td></tr>
+            <tr><td>checkout_click</td><td>@Model.Checkouts</td></tr>
+            <tr><td>reward_tier_reached</td><td>@Model.RewardReached</td></tr>
+            <tr><td>discount_applied</td><td>@Model.DiscountApplied</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

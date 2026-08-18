@@ -282,13 +282,57 @@
       return;
     }
 
-    if (cfg.useAi) {
+    const manual = (cfg.manualProductIds || [])
+      .map(function (id) {
+        const s = String(id);
+        const m = s.match(/(\d+)\s*$/);
+        return m ? Number(m[1]) : NaN;
+      })
+      .filter(function (n) {
+        return !isNaN(n);
+      });
+
+    if (manual.length) {
+      state.upsells = await loadManualProducts(manual, cfg.maxItems || 6);
+    } else if (cfg.useAi) {
       const first = state.cart.items[0];
       state.upsells = await loadRecommendations(first.product_id, cfg.maxItems || 6);
     } else {
       state.upsells = [];
     }
     if (state.open) render();
+  }
+
+  async function loadManualProducts(productIds, limit) {
+    try {
+      const data = await fetchJson("/products.json?limit=250");
+      const products = data.products || [];
+      const wanted = new Set(productIds);
+      const inCart = new Set(
+        (state.cart && state.cart.items ? state.cart.items : []).map(function (i) {
+          return i.product_id;
+        }),
+      );
+      return products
+        .filter(function (p) {
+          return wanted.has(p.id) && p.available && !inCart.has(p.id);
+        })
+        .slice(0, limit || 6)
+        .map(function (p) {
+          const variant = pickVariant(p);
+          return {
+            id: p.id,
+            title: p.title,
+            handle: p.handle,
+            image: p.featured_image || (p.images && p.images[0]),
+            price: variant ? variant.price : p.price,
+            variantId: variant ? variant.id : null,
+          };
+        });
+    } catch (e) {
+      console.warn("[UpCard] manual upsells failed", e);
+      return [];
+    }
   }
 
   async function loadRecommendations(productId, limit) {

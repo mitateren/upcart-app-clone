@@ -1,0 +1,45 @@
+﻿@using Microsoft.Extensions.Options
+@using UpCard.Web.Services
+@inject IOptions<ShopifyOptions> ShopifyOpts
+@{
+    var path = ViewContext.HttpContext.Request.Path.Value ?? "/";
+    string NavClass(string page) => path.Equals(page, StringComparison.OrdinalIgnoreCase)
+        || (page != "/" && path.StartsWith(page, StringComparison.OrdinalIgnoreCase))
+        ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · UpCard</title>
+    <meta name="shopify-api-key" content="@ShopifyOpts.Value.ApiKey" />
+    <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+    <link rel="stylesheet" href="~/css/upcard-admin.css" asp-append-version="true" />
+</head>
+<body>
+<div class="uc-shell">
+    <aside class="uc-sidebar">
+        <div class="uc-brand">
+            <div class="uc-brand-mark">U</div>
+            <div>
+                <h1>UpCard</h1>
+                <span>Cart drawer · Upsell</span>
+            </div>
+        </div>
+        <nav class="uc-nav">
+            <a class="@NavClass("/")" asp-page="/Index">Home</a>
+            <a class="@NavClass("/Editor")" asp-page="/Editor">Cart Editor</a>
+            <a class="@NavClass("/Carts")" asp-page="/Carts">Manage Carts</a>
+            <a class="@NavClass("/Discounts")" asp-page="/Discounts">Discounts</a>
+            <a class="@NavClass("/Analytics")" asp-page="/Analytics">Analytics</a>
+            <a class="@NavClass("/Settings")" asp-page="/Settings">Settings</a>
+        </nav>
+    </aside>
+    <main class="uc-main">
+        @RenderBody()
+    </main>
+</div>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

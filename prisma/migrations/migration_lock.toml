@@ -1,4 +1,0 @@
-# This file tracks migration history for Prisma Migrate.
-# Learn more: https://pris.ly/d/migrate-history
-
-provider = "sqlite"

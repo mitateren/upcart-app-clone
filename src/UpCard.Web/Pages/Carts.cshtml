@@ -1,0 +1,60 @@
+@page
+@model CartsModel
+@{
+    ViewData["Title"] = "Manage Carts";
+}
+
+<h1 class="uc-page-title">Manage Carts</h1>
+<p class="uc-page-sub">Multiple cart experiences · Publish ile canlı sepeti seç (Upcart multicart)</p>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="uc-alert uc-alert-ok">@Model.Message</div>
+}
+
+<div class="uc-card" style="margin-bottom:16px">
+    <div class="uc-card-hd"><h2>Yeni cart</h2></div>
+    <div class="uc-card-bd">
+        <form method="post" asp-page-handler="Create" class="uc-actions" style="align-items:end">
+            <div class="uc-field" style="margin:0;min-width:240px">
+                <label>Name</label>
+                <input class="uc-input" name="name" value="New cart" />
+            </div>
+            <button class="uc-btn uc-btn-primary" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+
+<div class="uc-card">
+    <table class="uc-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Traffic</th>
+            <th>Updated</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model.Carts)
+        {
+            <tr>
+                <td><strong>@c.Name</strong></td>
+                <td><span class="uc-badge @(c.Status == "live" ? "uc-badge-live" : "uc-badge-draft")">@c.Status</span></td>
+                <td>@c.TrafficAllocation%</td>
+                <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
+                <td>
+                    <div class="uc-actions">
+                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Edit</a>
+                        <form method="post" asp-page-handler="Publish">
+                            <input type="hidden" name="cartId" value="@c.Id" />
+                            <button class="uc-btn uc-btn-primary uc-btn-sm" type="submit">Publish</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

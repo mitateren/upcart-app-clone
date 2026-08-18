@@ -2,8 +2,7 @@
 
 client_id = "bf5472c84b033938e4f3cf3e9abd7eaa"
 name = "UpCard"
-# TODO: kendi HTTPS domaininle degistir (ornek: https://upcard.tisortgetir.com)
-application_url = "https://upcart.gezionlugu.com"
+application_url = "https://upcart.tisortgetir.com"
 embedded = true
 
 [access_scopes]
@@ -11,9 +10,9 @@ scopes = "read_discounts,read_locales,read_orders,read_products,read_themes,writ
 
 [auth]
 redirect_urls = [
-  "https://upcart.gezionlugu.com/auth/callback",
-  "https://upcart.gezionlugu.com/auth/shopify/callback",
-  "https://upcart.gezionlugu.com/api/auth/callback"
+  "https://upcart.tisortgetir.com/auth/callback",
+  "https://upcart.tisortgetir.com/auth/shopify/callback",
+  "https://upcart.tisortgetir.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -28,7 +27,7 @@ api_version = "2026-10"
   uri = "/webhooks/app/scopes_update"
 
 [app_proxy]
-url = "https://upcart.gezionlugu.com/api/proxy"
+url = "https://upcart.tisortgetir.com/api/proxy"
 subpath = "upcard"
 prefix = "apps"
 
@@ -40,5 +39,4 @@ access.admin = "merchant_read_write"
 access.storefront = "public_read"
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true

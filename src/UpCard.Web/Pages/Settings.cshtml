@@ -1,0 +1,26 @@
+@page
+@model SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<h1 class="uc-page-title">Settings</h1>
+<p class="uc-page-sub">Custom CSS / HTML ve çeviriler (canlı cart). Detaylı modül ayarları için Cart Editor’ı kullan.</p>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="uc-alert uc-alert-ok">@Model.Message</div>
+}
+
+<form method="post" class="uc-card">
+    <div class="uc-card-bd">
+        <input type="hidden" asp-for="CartId" />
+        <div class="uc-field"><label>Custom CSS</label><textarea class="uc-textarea" asp-for="CustomCss" rows="6"></textarea></div>
+        <div class="uc-field"><label>HTML before announcements</label><textarea class="uc-textarea" asp-for="BeforeAnnouncements" rows="3"></textarea></div>
+        <div class="uc-field"><label>HTML between items</label><textarea class="uc-textarea" asp-for="BetweenItems" rows="3"></textarea></div>
+        <div class="uc-field"><label>HTML above checkout</label><textarea class="uc-textarea" asp-for="AboveCheckout" rows="3"></textarea></div>
+        <div class="uc-field"><label>Scripts</label><textarea class="uc-textarea" asp-for="Scripts" rows="3"></textarea></div>
+        <div class="uc-field"><label>Translations JSON</label><textarea class="uc-textarea" asp-for="TranslationsJson" rows="8"></textarea></div>
+        <button class="uc-btn uc-btn-primary" type="submit">Save settings</button>
+    </div>
+</form>
