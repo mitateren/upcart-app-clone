@@ -1,0 +1,83 @@
+@page "{id?}"
+@model DiscountEditModel
+@{
+    ViewData["Title"] = string.IsNullOrEmpty(Model.Id) ? "Create a discount" : "Edit discount";
+}
+
+<div class="uc-actions" style="justify-content:space-between;margin-bottom:16px">
+    <div class="uc-actions">
+        <a class="uc-btn uc-btn-secondary" asp-page="/Discounts">←</a>
+        <h1 class="uc-page-title" style="margin:0">@ViewData["Title"]</h1>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="uc-card" style="margin-bottom:16px">
+        <div class="uc-card-hd"><h2>Overall</h2></div>
+        <div class="uc-card-bd">
+            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">These fields will also be used in your cart template on the storefront.</p>
+            <div class="uc-field"><label>Title *</label><input class="uc-input" asp-for="Title" maxlength="50" /></div>
+            <div class="uc-field"><label>Discount code *</label><input class="uc-input" asp-for="Code" maxlength="25" /></div>
+            <div class="uc-field"><label>Description *</label><textarea class="uc-textarea" asp-for="Description" rows="3"></textarea></div>
+        </div>
+    </div>
+
+    <div class="uc-card" style="margin-bottom:16px">
+        <div class="uc-card-hd"><h2>Triggers (up to 2)</h2></div>
+        <div class="uc-card-bd">
+            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">Conditions that must be met to offer a reward.</p>
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field">
+                    <label>Trigger 1</label>
+                    <select class="uc-select" asp-for="TriggerType">
+                        <option value="cart_total">Cart total</option>
+                        <option value="cart_quantity">Cart quantity</option>
+                        <option value="products">Specific products</option>
+                        <option value="collections">Specific collections</option>
+                        <option value="subscription">Subscription</option>
+                        <option value="logged_in">Customer is logged in</option>
+                    </select>
+                </div>
+                <div class="uc-field"><label>Minimum amount / qty</label><input class="uc-input" type="number" asp-for="TriggerMin" /></div>
+                <div class="uc-field">
+                    <label>Trigger 2 (optional)</label>
+                    <select class="uc-select" asp-for="TriggerType2">
+                        <option value="">— none —</option>
+                        <option value="cart_total">Cart total</option>
+                        <option value="cart_quantity">Cart quantity</option>
+                        <option value="products">Specific products</option>
+                        <option value="collections">Specific collections</option>
+                        <option value="subscription">Subscription</option>
+                        <option value="logged_in">Customer is logged in</option>
+                    </select>
+                </div>
+                <div class="uc-field"><label>Minimum 2</label><input class="uc-input" type="number" asp-for="TriggerMin2" /></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uc-card" style="margin-bottom:16px">
+        <div class="uc-card-hd"><h2>Reward</h2></div>
+        <div class="uc-card-bd">
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field">
+                    <label>Reward type</label>
+                    <select class="uc-select" asp-for="RewardType">
+                        <option value="free_shipping">Free shipping</option>
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed amount</option>
+                        <option value="free_gift">Free gift</option>
+                    </select>
+                </div>
+                <div class="uc-field"><label>Value (% or amount)</label><input class="uc-input" type="number" asp-for="RewardValue" /></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uc-actions" style="justify-content:flex-end">
+        <button class="uc-btn uc-btn-secondary" type="submit" asp-page-handler="SaveDraft">Save draft</button>
+        <button class="uc-btn uc-btn-primary" type="submit" asp-page-handler="Publish">Publish &amp; exit</button>
+    </div>
+</form>

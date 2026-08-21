@@ -1,11 +1,21 @@
 @page
 @model CartsModel
 @{
-    ViewData["Title"] = "Manage Carts";
+    ViewData["Title"] = "Carts";
+    var live = Model.Carts.Where(c => c.Status == "live").ToList();
+    var draft = Model.Carts.Where(c => c.Status != "live").ToList();
 }
 
-<h1 class="uc-page-title">Manage Carts</h1>
-<p class="uc-page-sub">Multiple cart experiences · Publish ile canlı sepeti seç (Upcart multicart)</p>
+<div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
+    <div>
+        <h1 class="uc-page-title" style="margin:0">Carts</h1>
+        <p class="uc-page-sub" style="margin:6px 0 0">Manage live &amp; draft cart experiences</p>
+    </div>
+    <div class="uc-actions">
+        <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Setup wizard</a>
+        <a class="uc-btn uc-btn-secondary" asp-page="/Index">Welcome</a>
+    </div>
+</div>
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
@@ -13,48 +23,73 @@
 }
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Yeni cart</h2></div>
+    <div class="uc-card-hd"><h2>Create cart</h2></div>
     <div class="uc-card-bd">
         <form method="post" asp-page-handler="Create" class="uc-actions" style="align-items:end">
-            <div class="uc-field" style="margin:0;min-width:240px">
+            <div class="uc-field" style="margin:0;min-width:260px">
                 <label>Name</label>
-                <input class="uc-input" name="name" value="New cart" />
+                <input class="uc-input" name="name" value="Untitled cart" />
             </div>
-            <button class="uc-btn uc-btn-primary" type="submit">Create</button>
+            <button class="uc-btn uc-btn-primary" type="submit">+ Create</button>
         </form>
     </div>
 </div>
 
-<div class="uc-card">
-    <table class="uc-table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Traffic</th>
-            <th>Updated</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var c in Model.Carts)
-        {
-            <tr>
-                <td><strong>@c.Name</strong></td>
-                <td><span class="uc-badge @(c.Status == "live" ? "uc-badge-live" : "uc-badge-draft")">@c.Status</span></td>
-                <td>@c.TrafficAllocation%</td>
-                <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
-                <td>
-                    <div class="uc-actions">
+<div class="uc-card" style="margin-bottom:16px">
+    <div class="uc-card-hd"><h2>Live carts</h2></div>
+    @if (!live.Any())
+    {
+        <div class="uc-card-bd" style="color:var(--uc-muted)">No live carts configured. Publish a draft to make it live.</div>
+    }
+    else
+    {
+        <table class="uc-table">
+            <thead><tr><th>Name</th><th>Traffic</th><th>Updated</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var c in live)
+            {
+                <tr>
+                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-live">live</span></td>
+                    <td>@c.TrafficAllocation%</td>
+                    <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
+                    <td class="uc-actions">
                         <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Edit</a>
-                        <form method="post" asp-page-handler="Publish">
-                            <input type="hidden" name="cartId" value="@c.Id" />
-                            <button class="uc-btn uc-btn-primary uc-btn-sm" type="submit">Publish</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="uc-card">
+    <div class="uc-card-hd"><h2>Draft carts</h2></div>
+    @if (!draft.Any())
+    {
+        <div class="uc-card-bd" style="color:var(--uc-muted)">No draft carts.</div>
+    }
+    else
+    {
+        <table class="uc-table">
+            <thead><tr><th>Name</th><th>Updated</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var c in draft)
+            {
+                <tr>
+                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-draft">draft</span></td>
+                    <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <div class="uc-actions">
+                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Edit</a>
+                            <form method="post" asp-page-handler="Publish">
+                                <input type="hidden" name="cartId" value="@c.Id" />
+                                <button class="uc-btn uc-btn-primary uc-btn-sm" type="submit">Publish</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
 </div>

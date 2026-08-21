@@ -1,4 +1,4 @@
-{% comment %} UpCard Bridge — Theme App Embed {% endcomment %}
+{% comment %} UpCard Bridge — Theme App Embed (replaces native cart drawer) {% endcomment %}
 {% if block.settings.enabled %}
 <script>
   window.UpCardBootstrap = {
@@ -12,8 +12,10 @@
     cartUrl: {{ routes.cart_url | json }},
     cartAddUrl: {{ routes.cart_add_url | json }},
     cartChangeUrl: {{ routes.cart_change_url | json }},
-    cartUpdateUrl: {{ routes.cart_update_url | json }}
+    cartUpdateUrl: {{ routes.cart_update_url | json }},
+    replaceNativeCart: true
   };
+  document.documentElement.classList.add('upcard-replace-cart');
 </script>
 {% endif %}
 
@@ -27,7 +29,7 @@
     {
       "type": "checkbox",
       "id": "enabled",
-      "label": "Enable UpCard cart drawer",
+      "label": "UpCard sepet çekmecesini etkinleştir (tema sepetinin yerini alır)",
       "default": true
     }
   ]

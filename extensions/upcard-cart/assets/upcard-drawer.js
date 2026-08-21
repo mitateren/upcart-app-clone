@@ -95,13 +95,13 @@
         showSavingsBelowPrices: true,
         fontFamily: "inherit",
       },
-      header: { enabled: true, title: "Your cart", showItemCount: true, closeButtonStyle: "x" },
+      header: { enabled: true, title: "Sepetiniz", showItemCount: true, closeButtonStyle: "x" },
       announcements: { enabled: false },
       rewards: { enabled: false, tiers: [] },
       upsells: { enabled: false },
       recommendations: { enabled: false },
       addons: { enabled: false },
-      discountCodes: { enabled: true, placeholder: "Discount code", buttonLabel: "Apply" },
+      discountCodes: { enabled: true, placeholder: "İndirim kodu", buttonLabel: "Uygula" },
       expressPayments: { enabled: false },
       trustBadges: { enabled: false },
       additionalNotes: { enabled: false },
@@ -110,10 +110,10 @@
       behavior: {
         openOnAddToCart: true,
         position: "right",
-        openCartSelectors: "a[href='/cart'], a[href$='/cart']",
-        addToCartSelectors: "form[action='/cart/add'] [type='submit'], [name='add']",
+        openCartSelectors: "a[href='/cart'], a[href$='/cart'], a[href*='/cart'], #cart-icon-bubble, .header__icon--cart, [aria-controls='CartDrawer']",
+        addToCartSelectors: "form[action*='/cart/add'] [type='submit'], form[action*='/cart/add'] button, [name='add'], .product-form__submit",
         continueShopping: true,
-        continueShoppingLabel: "Continue shopping",
+        continueShoppingLabel: "Alışverişe devam et",
         goToCartOnCheckout: false,
         disableFixedFooter: false,
         shadowDom: false,
@@ -121,11 +121,11 @@
       customCss: "",
       customHtml: {},
       translations: {
-        emptyCart: "Your cart is empty",
-        subtotal: "Subtotal",
-        savings: "You're saving",
-        checkout: "Checkout",
-        remove: "Remove",
+        emptyCart: "Sepetiniz boş",
+        subtotal: "Ara toplam",
+        savings: "Tasarrufunuz",
+        checkout: "Ödemeye geç",
+        remove: "Kaldır",
       },
     };
   }
@@ -253,13 +253,13 @@
     }
     const max = tiers[tiers.length - 1].threshold;
     const pct = Math.min(100, (basis / max) * 100);
-    let text = rewards.completedText || "All rewards unlocked!";
+    let text = rewards.completedText || "Tüm ödüller açıldı!";
     if (nextTier) {
       const remaining =
         rewards.basis === "item_count"
           ? Math.max(0, Math.ceil(nextTier.threshold - basis))
           : money(Math.max(0, nextTier.threshold * 100 - cartSubtotal()));
-      text = (nextTier.textBefore || "Add {remaining} more").replace("{remaining}", remaining);
+      text = (nextTier.textBefore || "{remaining} daha ekleyin").replace("{remaining}", remaining);
     } else if (currentTier) {
       text = currentTier.textAfter || text;
     }
@@ -436,11 +436,11 @@
       await fetch("/discount/" + encodeURIComponent(state.discountCode), {
         credentials: "same-origin",
       });
-      state.discountMessage = "Discount applied";
+      state.discountMessage = "İndirim uygulandı";
       track("discount_applied", { code: state.discountCode });
       await refreshCart();
     } catch {
-      state.discountMessage = "Could not apply code";
+      state.discountMessage = "Kod uygulanamadı";
     }
     render();
   }
@@ -562,7 +562,7 @@
     // Items
     let itemsHtml = "";
     if (!cart || !cart.items.length) {
-      itemsHtml = '<div class="upcard-empty">' + htmlEscape(t.emptyCart || "Your cart is empty") + "</div>";
+      itemsHtml = '<div class="upcard-empty">' + htmlEscape(t.emptyCart || "Sepetiniz boş") + "</div>";
     } else {
       itemsHtml = cart.items
         .map(function (item) {
@@ -609,7 +609,7 @@
             '<button type="button" class="upcard-remove" data-remove="' +
             htmlEscape(item.key) +
             '">' +
-            htmlEscape(t.remove || "Remove") +
+            htmlEscape(t.remove || "Kaldır") +
             "</button></div></div>"
           );
         })
@@ -631,8 +631,8 @@
     if (showRecEmpty || showUpsell) {
       const title = showRecEmpty
         ? cfg.recommendations.title
-        : cfg.upsells.title || "You may also like";
-      const btn = (cfg.upsells && cfg.upsells.addButtonLabel) || "Add";
+        : cfg.upsells.title || "Bunları da beğenebilirsiniz";
+      const btn = (cfg.upsells && cfg.upsells.addButtonLabel) || "Ekle";
       upsellHtml =
         '<div class="upcard-section-title">' +
         htmlEscape(title) +
@@ -743,13 +743,13 @@
       footerClass +
       '">' +
       '<div class="upcard-footer__row"><span>' +
-      htmlEscape(t.subtotal || "Subtotal") +
+      htmlEscape(t.subtotal || "Ara toplam") +
       "</span><strong>" +
       money(cartSubtotal()) +
       "</strong></div>" +
       (savings > 0
         ? '<div class="upcard-footer__savings">' +
-          htmlEscape(t.savings || "You're saving") +
+          htmlEscape(t.savings || "Tasarrufunuz") +
           " " +
           money(savings) +
           "</div>"
@@ -758,7 +758,7 @@
       '<a class="upcard-btn" href="' +
       checkoutHref +
       '" data-upcard-checkout>' +
-      htmlEscape(t.checkout || "Checkout") +
+      htmlEscape(t.checkout || "Ödemeye geç") +
       "</a>";
 
     if (cfg.expressPayments && cfg.expressPayments.enabled) {
@@ -772,7 +772,7 @@
     if (cfg.behavior.continueShopping) {
       footerHtml +=
         '<button type="button" class="upcard-btn upcard-btn--secondary" data-upcard-close>' +
-        htmlEscape(cfg.behavior.continueShoppingLabel || "Continue shopping") +
+        htmlEscape(cfg.behavior.continueShoppingLabel || "Alışverişe devam et") +
         "</button>";
     }
     footerHtml += "</div>";
@@ -877,30 +877,149 @@
     }
   }
 
+  function isCartPageUrl(href) {
+    if (!href) return false;
+    try {
+      const u = new URL(href, window.location.origin);
+      const p = (u.pathname || "").replace(/\/+$/, "") || "/";
+      // /cart, /en/cart, /tr/cart — but not /cart/add, /cart/change, checkout
+      return /(?:^|\/)cart$/.test(p);
+    } catch {
+      return false;
+    }
+  }
+
+  function isCartIconTarget(el) {
+    if (!el || !el.closest) return null;
+    const hit = el.closest(
+      [
+        "a[href*='/cart']",
+        "a[href$='/cart']",
+        "#cart-icon-bubble",
+        "#cart-icon-bubble a",
+        ".header__icon--cart",
+        ".cart-icon-bubble",
+        "[data-cart-toggle]",
+        "[data-action='toggle-cart']",
+        "cart-drawer-component",
+        "cart-icon-bubble",
+        ".js-drawer-open-cart",
+        "button[aria-controls='cart-drawer']",
+        "a[aria-controls='CartDrawer']",
+        "[aria-controls='CartDrawer']",
+        "[aria-controls='cart-drawer']",
+      ].join(","),
+    );
+    if (!hit) return null;
+    // Don't intercept checkout / cart form submits
+    if (hit.closest("form[action*='/cart']") && hit.matches("button, input")) {
+      const form = hit.closest("form");
+      const action = (form && form.getAttribute("action")) || "";
+      if (/\/cart\/(add|change|update)/.test(action)) return null;
+    }
+    const href = hit.getAttribute && hit.getAttribute("href");
+    if (href && /\/checkouts?\b|\/account\b/.test(href)) return null;
+    if (href && /\/cart\/(add|change|update|clear)/.test(href)) return null;
+    return hit;
+  }
+
+  function suppressNativeCartUi() {
+    document.documentElement.classList.add("upcard-replace-cart");
+    // Close / neutralize Dawn-style drawers if already open
+    document.querySelectorAll("cart-drawer, cart-notification, #CartDrawer, #cart-notification").forEach(function (node) {
+      try {
+        if (typeof node.close === "function") node.close();
+        node.removeAttribute("open");
+        node.classList.remove("active", "is-open", "animate");
+      } catch (e) {}
+    });
+  }
+
   function interceptClicks() {
     const cfg = state.config.behavior || {};
     document.addEventListener(
       "click",
       function (e) {
-        const openSel = cfg.openCartSelectors || "";
-        const addSel = cfg.addToCartSelectors || "";
+        if (e.defaultPrevented) return;
+
+        // 1) Cart icon / cart link → UpCard drawer (never native cart page/drawer)
+        const cartHit = isCartIconTarget(e.target);
+        if (cartHit) {
+          const href = cartHit.getAttribute && cartHit.getAttribute("href");
+          if (!href || isCartPageUrl(href) || cartHit.matches("[aria-controls], [data-cart-toggle], #cart-icon-bubble, .header__icon--cart, cart-icon-bubble")) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            suppressNativeCartUi();
+            openDrawer();
+            return;
+          }
+        }
+
+        // Config selector fallback
+        const openSel =
+          cfg.openCartSelectors ||
+          "a[href='/cart'], a[href$='/cart'], a[href*='/cart'], #cart-icon-bubble, .header__icon--cart";
         const openEl = openSel && e.target.closest(openSel);
-        if (openEl) {
+        if (openEl && (!openEl.getAttribute("href") || isCartPageUrl(openEl.getAttribute("href")) || openEl.matches("#cart-icon-bubble, .header__icon--cart"))) {
           e.preventDefault();
           e.stopPropagation();
+          e.stopImmediatePropagation();
+          suppressNativeCartUi();
           openDrawer();
           return;
         }
-        if (cfg.openOnAddToCart && addSel) {
+
+        // 2) Add to cart buttons → let request happen, then open UpCard
+        if (cfg.openOnAddToCart !== false) {
+          const addSel =
+            cfg.addToCartSelectors ||
+            "form[action*='/cart/add'] [type='submit'], form[action*='/cart/add'] button, [name='add'], button[name='add'], .product-form__submit";
           const addEl = e.target.closest(addSel);
           if (addEl) {
             setTimeout(function () {
               refreshCart().then(function () {
+                suppressNativeCartUi();
                 openDrawer();
               });
-            }, 400);
+            }, 350);
           }
         }
+      },
+      true,
+    );
+
+    // Intercept form submit to /cart/add (non-AJAX themes)
+    document.addEventListener(
+      "submit",
+      function (e) {
+        const form = e.target;
+        if (!form || !form.getAttribute) return;
+        const action = form.getAttribute("action") || "";
+        if (!/\/cart\/add/.test(action)) return;
+        if (cfg.openOnAddToCart === false) return;
+        // If theme uses AJAX it will cancel; otherwise we convert to fetch
+        if (form.getAttribute("data-upcard-ajax") === "1") return;
+        e.preventDefault();
+        e.stopPropagation();
+        const fd = new FormData(form);
+        fetch(action.split("?")[0] + ".js", {
+          method: "POST",
+          body: fd,
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
+        })
+          .then(function () {
+            return refreshCart();
+          })
+          .then(function () {
+            suppressNativeCartUi();
+            openDrawer();
+          })
+          .catch(function () {
+            form.setAttribute("data-upcard-ajax", "1");
+            form.submit();
+          });
       },
       true,
     );
@@ -912,14 +1031,18 @@
       const args = arguments;
       return origFetch.apply(this, args).then(function (res) {
         try {
-          const url = String(args[0] || "");
+          const url = String((args[0] && args[0].url) || args[0] || "");
           if (/\/cart\/(add|change|update|clear)/.test(url)) {
             res
               .clone()
               .json()
               .then(function () {
                 refreshCart();
-                if (state.config.behavior.openOnAddToCart && /\/cart\/add/.test(url)) {
+                if (
+                  (!state.config.behavior || state.config.behavior.openOnAddToCart !== false) &&
+                  /\/cart\/add/.test(url)
+                ) {
+                  suppressNativeCartUi();
                   openDrawer();
                 }
               })
@@ -929,6 +1052,32 @@
         return res;
       });
     };
+
+    // XMLHttpRequest used by some themes
+    const OrigXHR = window.XMLHttpRequest;
+    function WrappedXHR() {
+      const xhr = new OrigXHR();
+      const open = xhr.open;
+      xhr.open = function (method, url) {
+        xhr.__upcardUrl = String(url || "");
+        return open.apply(xhr, arguments);
+      };
+      xhr.addEventListener("load", function () {
+        if (/\/cart\/(add|change|update|clear)/.test(xhr.__upcardUrl || "")) {
+          refreshCart().then(function () {
+            if (
+              (!state.config.behavior || state.config.behavior.openOnAddToCart !== false) &&
+              /\/cart\/add/.test(xhr.__upcardUrl || "")
+            ) {
+              suppressNativeCartUi();
+              openDrawer();
+            }
+          });
+        }
+      });
+      return xhr;
+    }
+    window.XMLHttpRequest = WrappedXHR;
   }
 
   function buildDom() {
@@ -942,7 +1091,7 @@
     drawer.hidden = true;
     drawer.setAttribute("role", "dialog");
     drawer.setAttribute("aria-modal", "true");
-    drawer.setAttribute("aria-label", "Cart");
+    drawer.setAttribute("aria-label", "Sepet");
 
     const sticky = document.createElement("button");
     sticky.type = "button";
@@ -986,6 +1135,7 @@
 
   async function init() {
     await loadConfig();
+    suppressNativeCartUi();
     buildDom();
     interceptClicks();
     watchAjaxCart();
@@ -995,6 +1145,14 @@
     } catch (e) {
       updateStickyCount();
     }
+
+    // If customer landed on /cart page, replace with UpCard drawer
+    if (isCartPageUrl(window.location.href)) {
+      var home = boot.rootUrl || "/";
+      history.replaceState(null, "", home);
+      openDrawer();
+    }
+
     window.UpCard = {
       open: openDrawer,
       close: closeDrawer,

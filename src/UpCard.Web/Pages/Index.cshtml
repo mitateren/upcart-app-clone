@@ -1,12 +1,13 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Welcome";
+    // Upcart home redirects conceptually to dashboard — keep as welcome hub
 }
 
 @if (Model.NeedsInstall)
 {
-    <h1 class="uc-page-title">UpCard’a hoş geldin</h1>
+    <h1 class="uc-page-title">Welcome to UpCard</h1>
     <p class="uc-page-sub">Shopify Admin içinden uygulamayı aç veya mağaza domain’ini gir.</p>
     <div class="uc-card">
         <div class="uc-card-bd">
@@ -15,63 +16,71 @@
                     <label>Shop domain</label>
                     <input class="uc-input" name="shop" placeholder="magaza.myshopify.com" required />
                 </div>
-                <button class="uc-btn uc-btn-primary" type="submit">Kur / Giriş</button>
+                <button class="uc-btn uc-btn-primary" type="submit">Install</button>
             </form>
         </div>
     </div>
 }
 else
 {
-    <h1 class="uc-page-title">Home</h1>
-    <p class="uc-page-sub">@Model.Shop · Canlı sepet: <strong>@Model.LiveCartName</strong>
-        <span class="uc-badge @(Model.LiveCartStatus == "live" ? "uc-badge-live" : "uc-badge-draft")">@Model.LiveCartStatus</span>
-    </p>
+    <div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
+        <h1 class="uc-page-title" style="margin:0">Welcome to UpCard 🎉</h1>
+        <div class="uc-actions">
+            <span class="uc-badge uc-badge-draft">Last 30 days</span>
+            <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage all carts</a>
+        </div>
+    </div>
+    <p class="uc-page-sub">@Model.Shop</p>
 
-    <div class="uc-grid uc-grid-4" style="margin-bottom:18px">
-        <div class="uc-card uc-metric"><div class="label">Cart opens</div><div class="value">@Model.Opens</div></div>
-        <div class="uc-card uc-metric"><div class="label">Upsell adds</div><div class="value">@Model.Upsells</div></div>
-        <div class="uc-card uc-metric"><div class="label">Checkout clicks</div><div class="value">@Model.Checkouts</div></div>
-        <div class="uc-card uc-metric"><div class="label">Upsell CTR</div><div class="value">@Model.UpsellCtr%</div></div>
+    <div class="uc-grid uc-grid-3" style="margin-bottom:16px">
+        <div class="uc-card uc-metric"><div class="label">Add-ons revenue</div><div class="value">0.00TL</div></div>
+        <div class="uc-card uc-metric"><div class="label">Upsell revenue</div><div class="value">0.00TL</div></div>
+        <div class="uc-card uc-metric"><div class="label">Subscriptions revenue</div><div class="value">0.00TL</div></div>
+    </div>
+
+    <div class="uc-card" style="margin-bottom:16px">
+        <div class="uc-card-bd">
+            <div class="uc-actions" style="justify-content:space-between;margin-bottom:10px">
+                <div>
+                    <strong>Live carts</strong>
+                    <span class="uc-badge @(Model.LiveCartStatus == "live" ? "uc-badge-live" : "uc-badge-draft")" style="margin-left:8px">
+                        @(Model.LiveCartStatus == "live" ? Model.LiveCartName : "No live carts configured")
+                    </span>
+                    <span class="uc-badge uc-badge-off" style="margin-left:6px">App embed check</span>
+                </div>
+            </div>
+            <p style="color:var(--uc-muted);margin:0 0 14px">Publish your cart to see it live, and start earning with your cart.</p>
+            <div class="uc-actions">
+                <a class="uc-btn uc-btn-primary" href="https://admin.shopify.com/store/@Model.Shop.Replace(".myshopify.com","")/themes/current/editor?context=apps" target="_blank" rel="noopener">Enable app embed</a>
+                <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage carts</a>
+                <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Setup wizard</a>
+            </div>
+        </div>
     </div>
 
     <div class="uc-grid uc-grid-2">
         <div class="uc-card">
-            <div class="uc-card-hd"><h2>Hızlı işlemler</h2></div>
-            <div class="uc-card-bd uc-actions">
-                <a class="uc-btn uc-btn-primary" asp-page="/Editor">Cart Editor</a>
-                <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage Carts</a>
-                <a class="uc-btn uc-btn-secondary" asp-page="/Discounts">Discounts</a>
-                <a class="uc-btn uc-btn-secondary" asp-page="/Analytics">Analytics</a>
-            </div>
+            <div class="uc-card-hd"><h2>Discounts</h2><a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Discounts">Manage all discounts</a></div>
+            <div class="uc-card-bd" style="color:var(--uc-muted)">Create triggered rewards (free shipping, % off, free gifts) like Upcart Discounts.</div>
         </div>
         <div class="uc-card">
-            <div class="uc-card-hd"><h2>Kurulum (Upcart gibi)</h2></div>
+            <div class="uc-card-hd"><h2>Setup guide</h2><span class="uc-badge uc-badge-live">1 of 5</span></div>
             <div class="uc-card-bd">
                 <ol class="uc-steps">
-                    <li>Themes → Customize → <strong>App embeds → UpCard Bridge</strong> aç</li>
-                    <li>Cart Editor’da Design, Rewards, Upsells, Add-ons modüllerini ayarla</li>
-                    <li>Manage Carts → Publish</li>
-                    <li>Storefront’ta ürün ekle → slide cart’ı doğrula</li>
+                    <li>Run setup wizard (style + modules)</li>
+                    <li>Enable <strong>UpCard Bridge</strong> app embed</li>
+                    <li>Publish a cart</li>
+                    <li>Create a discount rule</li>
+                    <li>Turn on sticky cart</li>
                 </ol>
             </div>
         </div>
     </div>
 
-    <div class="uc-card" style="margin-top:16px">
-        <div class="uc-card-hd"><h2>Özellikler</h2></div>
-        <div class="uc-card-bd" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;font-size:13px">
-            <div>✓ Slide cart drawer</div>
-            <div>✓ Rewards / free shipping bar</div>
-            <div>✓ In-cart upsells</div>
-            <div>✓ Announcements + timer</div>
-            <div>✓ Add-ons</div>
-            <div>✓ Discount codes</div>
-            <div>✓ Trust badges</div>
-            <div>✓ Sticky cart</div>
-            <div>✓ Custom CSS / HTML</div>
-            <div>✓ Multicart publish</div>
-            <div>✓ Analytics events</div>
-            <div>✓ ATC intercept</div>
-        </div>
+    <div class="uc-grid uc-grid-4" style="margin-top:16px">
+        <div class="uc-card uc-metric"><div class="label">Cart opens</div><div class="value">@Model.Opens</div></div>
+        <div class="uc-card uc-metric"><div class="label">Upsell adds</div><div class="value">@Model.Upsells</div></div>
+        <div class="uc-card uc-metric"><div class="label">Checkouts</div><div class="value">@Model.Checkouts</div></div>
+        <div class="uc-card uc-metric"><div class="label">Upsell CTR</div><div class="value">@Model.UpsellCtr%</div></div>
     </div>
 }

@@ -54,7 +54,7 @@ public class CartService
         var cart = new CartRecord
         {
             ShopId = shopId,
-            Name = "Default cart",
+            Name = "Varsayılan sepet",
             Status = "live",
             TrafficAllocation = 100,
             ConfigJson = CartConfigDefaults.CreateDefaultJson()

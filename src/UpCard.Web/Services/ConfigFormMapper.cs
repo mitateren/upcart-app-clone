@@ -24,7 +24,7 @@ public static class ConfigFormMapper
 
         var header = Obj(root, "header");
         form.HeaderEnabled = Bool(header, "enabled", true);
-        form.HeaderTitle = Str(header, "title", "Your cart");
+        form.HeaderTitle = Str(header, "title", "Sepetiniz");
         form.ShowItemCount = Bool(header, "showItemCount", true);
         form.ShowLogo = Bool(header, "showLogo", false);
         form.LogoUrl = Str(header, "logoUrl", "");
@@ -41,40 +41,40 @@ public static class ConfigFormMapper
         form.RewardsEnabled = Bool(rewards, "enabled", true);
         form.RewardBarColor = Str(rewards, "barColor", "#008060");
         form.RewardBg = Str(rewards, "backgroundColor", "#e8f5f0");
-        form.RewardCompletedText = Str(rewards, "completedText", "You've unlocked all rewards!");
+        form.RewardCompletedText = Str(rewards, "completedText", "Tüm ödülleri açtınız!");
         form.Tier1Threshold = TierNum(rewards, 0, "threshold", 50);
-        form.Tier1TextBefore = TierStr(rewards, 0, "textBefore", "Add {remaining} more for free shipping");
-        form.Tier1TextAfter = TierStr(rewards, 0, "textAfter", "Free shipping unlocked!");
+        form.Tier1TextBefore = TierStr(rewards, 0, "textBefore", "Ücretsiz kargo için {remaining} daha ekleyin");
+        form.Tier1TextAfter = TierStr(rewards, 0, "textAfter", "Ücretsiz kargo açıldı!");
         form.Tier2Threshold = TierNum(rewards, 1, "threshold", 100);
-        form.Tier2TextBefore = TierStr(rewards, 1, "textBefore", "Add {remaining} more for 10% off");
-        form.Tier2TextAfter = TierStr(rewards, 1, "textAfter", "10% discount unlocked!");
+        form.Tier2TextBefore = TierStr(rewards, 1, "textBefore", "%10 indirim için {remaining} daha ekleyin");
+        form.Tier2TextAfter = TierStr(rewards, 1, "textAfter", "%10 indirim açıldı!");
         form.Tier2DiscountPercent = TierNum(rewards, 1, "discountPercent", 10);
 
         var upsells = Obj(root, "upsells");
         form.UpsellsEnabled = Bool(upsells, "enabled", true);
-        form.UpsellsTitle = Str(upsells, "title", "You may also like");
-        form.UpsellsButton = Str(upsells, "addButtonLabel", "Add");
+        form.UpsellsTitle = Str(upsells, "title", "Bunları da beğenebilirsiniz");
+        form.UpsellsButton = Str(upsells, "addButtonLabel", "Ekle");
         form.UpsellsUseAi = Bool(upsells, "useAi", true);
         form.UpsellsMaxItems = Int(upsells, "maxItems", 6);
         form.ManualProductIds = string.Join(", ", ArrStr(upsells, "manualProductIds"));
 
         var rec = Obj(root, "recommendations");
         form.RecommendationsEnabled = Bool(rec, "enabled", true);
-        form.RecommendationsTitle = Str(rec, "title", "Popular products");
+        form.RecommendationsTitle = Str(rec, "title", "Popüler ürünler");
         form.RecommendationsEmptyOnly = Bool(rec, "emptyCartOnly", true);
         form.RecommendationsMax = Int(rec, "maxItems", 4);
 
         var addons = Obj(root, "addons");
         form.AddonsEnabled = Bool(addons, "enabled", false);
-        form.AddonsTitle = Str(addons, "title", "Add shipping protection");
+        form.AddonsTitle = Str(addons, "title", "Kargo koruması ekle");
         form.AddonsDescription = Str(addons, "description", "");
         form.AddonsVariantId = Str(addons, "productVariantId", "");
         form.AddonsProductTitle = Str(addons, "productTitle", "");
 
         var disc = Obj(root, "discountCodes");
         form.DiscountCodesEnabled = Bool(disc, "enabled", true);
-        form.DiscountPlaceholder = Str(disc, "placeholder", "Discount code");
-        form.DiscountButton = Str(disc, "buttonLabel", "Apply");
+        form.DiscountPlaceholder = Str(disc, "placeholder", "İndirim kodu");
+        form.DiscountButton = Str(disc, "buttonLabel", "Uygula");
 
         var express = Obj(root, "expressPayments");
         form.ExpressEnabled = Bool(express, "enabled", true);
@@ -82,12 +82,12 @@ public static class ConfigFormMapper
         var trust = Obj(root, "trustBadges");
         form.TrustEnabled = Bool(trust, "enabled", false);
         form.TrustImageUrl = Str(trust, "imageUrl", "");
-        form.TrustAlt = Str(trust, "alt", "Trusted checkout");
+        form.TrustAlt = Str(trust, "alt", "Güvenli ödeme");
 
         var notes = Obj(root, "additionalNotes");
         form.NotesEnabled = Bool(notes, "enabled", false);
-        form.NotesLabel = Str(notes, "label", "Order notes");
-        form.NotesPlaceholder = Str(notes, "placeholder", "Special instructions…");
+        form.NotesLabel = Str(notes, "label", "Sipariş notu");
+        form.NotesPlaceholder = Str(notes, "placeholder", "Özel talimatlarınız…");
 
         var sticky = Obj(root, "stickyCart");
         form.StickyEnabled = Bool(sticky, "enabled", true);
@@ -100,11 +100,11 @@ public static class ConfigFormMapper
         form.OpenOnAddToCart = Bool(behavior, "openOnAddToCart", true);
         form.DrawerPosition = Str(behavior, "position", "right");
         form.ContinueShopping = Bool(behavior, "continueShopping", true);
-        form.ContinueShoppingLabel = Str(behavior, "continueShoppingLabel", "Continue shopping");
+        form.ContinueShoppingLabel = Str(behavior, "continueShoppingLabel", "Alışverişe devam et");
 
         var sub = Obj(root, "subscriptionUpgrades");
         form.SubscriptionEnabled = Bool(sub, "enabled", false);
-        form.SubscriptionTitle = Str(sub, "title", "Subscribe & save");
+        form.SubscriptionTitle = Str(sub, "title", "Abone ol, tasarruf et");
 
         form.CustomCss = Str(root, "customCss", "");
         var html = Obj(root, "customHtml");
@@ -114,10 +114,10 @@ public static class ConfigFormMapper
         form.CustomScripts = Str(html, "scripts", "");
 
         var tr = Obj(root, "translations");
-        form.TrEmptyCart = Str(tr, "emptyCart", "Your cart is empty");
-        form.TrSubtotal = Str(tr, "subtotal", "Subtotal");
-        form.TrCheckout = Str(tr, "checkout", "Checkout");
-        form.TrRemove = Str(tr, "remove", "Remove");
+        form.TrEmptyCart = Str(tr, "emptyCart", "Sepetiniz boş");
+        form.TrSubtotal = Str(tr, "subtotal", "Ara toplam");
+        form.TrCheckout = Str(tr, "checkout", "Ödemeye geç");
+        form.TrRemove = Str(tr, "remove", "Kaldır");
 
         form.RawJsonBackup = json;
         return form;
@@ -379,7 +379,7 @@ public class CartEditorForm
     public string FontFamily { get; set; } = "inherit";
 
     public bool HeaderEnabled { get; set; } = true;
-    public string HeaderTitle { get; set; } = "Your cart";
+    public string HeaderTitle { get; set; } = "Sepetiniz";
     public bool ShowItemCount { get; set; } = true;
     public bool ShowLogo { get; set; }
     public string LogoUrl { get; set; } = "";
@@ -405,7 +405,7 @@ public class CartEditorForm
 
     public bool UpsellsEnabled { get; set; } = true;
     public string UpsellsTitle { get; set; } = "";
-    public string UpsellsButton { get; set; } = "Add";
+    public string UpsellsButton { get; set; } = "Ekle";
     public bool UpsellsUseAi { get; set; } = true;
     public int UpsellsMaxItems { get; set; } = 6;
     public string ManualProductIds { get; set; } = "";
@@ -423,7 +423,7 @@ public class CartEditorForm
 
     public bool DiscountCodesEnabled { get; set; } = true;
     public string DiscountPlaceholder { get; set; } = "";
-    public string DiscountButton { get; set; } = "Apply";
+    public string DiscountButton { get; set; } = "Uygula";
 
     public bool ExpressEnabled { get; set; } = true;
     public bool TrustEnabled { get; set; }
@@ -443,7 +443,7 @@ public class CartEditorForm
     public bool OpenOnAddToCart { get; set; } = true;
     public string DrawerPosition { get; set; } = "right";
     public bool ContinueShopping { get; set; } = true;
-    public string ContinueShoppingLabel { get; set; } = "Continue shopping";
+    public string ContinueShoppingLabel { get; set; } = "Alışverişe devam et";
 
     public bool SubscriptionEnabled { get; set; }
     public string SubscriptionTitle { get; set; } = "";

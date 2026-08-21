@@ -1,0 +1,69 @@
+@page
+@model OnboardingModel
+@{
+    ViewData["Title"] = "Setup";
+}
+
+@if (Model.Step == 1)
+{
+    <h1 class="uc-page-title">UpCard Cart Drawer</h1>
+    <p class="uc-page-sub"><strong>Select a base style</strong> — Colours can be adjusted later in the cart editor — focus on the overall layout and feel.</p>
+
+    <form method="post" asp-page-handler="Next">
+        <input type="hidden" name="Step" value="1" />
+        <div class="uc-style-grid">
+            @foreach (var s in new[] {
+                ("theme", "Your Live Theme"),
+                ("default", "Default"),
+                ("ivory", "Ivory"),
+                ("electric", "Electric"),
+                ("natural", "Natural")
+            })
+            {
+                <label class="uc-style-card @(Model.Style == s.Item1 ? "selected" : "")">
+                    <input type="radio" name="Style" value="@s.Item1" checked="@(Model.Style == s.Item1)" />
+                    <div class="swatch @s.Item1"></div>
+                    <strong>@s.Item2</strong>
+                </label>
+            }
+        </div>
+        <div class="uc-wizard-foot">
+            <span>Step 1 of 2</span>
+            <button class="uc-btn uc-btn-primary" type="submit">Next</button>
+        </div>
+    </form>
+}
+else
+{
+    <h1 class="uc-page-title">Recommended modules</h1>
+    <p class="uc-page-sub">Pick any modules to include in your cart — you can add or remove these anytime later in the cart editor.</p>
+
+    <form method="post" asp-page-handler="Save">
+        <div class="uc-module-pick-grid">
+            <label class="uc-pick-card"><input asp-for="ModUpsells" type="checkbox" /><strong>Upsells</strong><span>Present targeted upsell offers to increase order value.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModRewards" type="checkbox" /><strong>Rewards</strong><span>Incentivize customers with reward tiers &amp; free shipping.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModRecommendations" type="checkbox" /><strong>Recommendations</strong><span>Show product recommendations to boost AOV.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModAddons" type="checkbox" /><strong>Add ons</strong><span>Let customers add complementary products with a toggle.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModAnnouncements" type="checkbox" /><strong>Announcements</strong><span>Display promotional banners at the top of the cart.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModSubscriptions" type="checkbox" /><strong>Subscriptions</strong><span>Offer subscription upgrades in the cart drawer.</span></label>
+        </div>
+        <div class="uc-wizard-foot">
+            <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding" asp-route-step="1">Previous</a>
+            <div class="uc-actions">
+                <span style="align-self:center;color:var(--uc-muted)">Step 2 of 2</span>
+                <button class="uc-btn uc-btn-primary" type="submit">Save as draft</button>
+            </div>
+        </div>
+    </form>
+}
+
+<aside class="uc-preview" style="margin-top:24px;max-width:360px">
+    <div class="uc-drawer-mock">
+        <div class="ann">Your products are reserved for 4:58 minutes!</div>
+        <div class="hd"><span>Cart · 2</span><span>×</span></div>
+        <div style="padding:0 16px;font-size:12px">You're away from free shipping!</div>
+        <div class="bar"><span></span></div>
+        <div class="item"><div class="swatch"></div><div><strong>Placeholder product</strong><div style="font-size:12px;opacity:.7">$84.00</div></div></div>
+        <div class="foot"><div class="cta">Checkout</div></div>
+    </div>
+</aside>

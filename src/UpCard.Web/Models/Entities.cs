@@ -21,7 +21,7 @@ public class CartRecord
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string ShopId { get; set; } = "";
     public ShopRecord? Shop { get; set; }
-    public string Name { get; set; } = "Default cart";
+    public string Name { get; set; } = "Varsayılan sepet";
     public string Status { get; set; } = "draft"; // draft | live
     public int TrafficAllocation { get; set; } = 100;
     public string ConfigJson { get; set; } = "{}";
@@ -84,7 +84,7 @@ public static class CartConfigDefaults
         ["header"] = new Dictionary<string, object?>
         {
             ["enabled"] = true,
-            ["title"] = "Your cart",
+            ["title"] = "Sepetiniz",
             ["showItemCount"] = true,
             ["showLogo"] = false,
             ["logoUrl"] = "",
@@ -93,7 +93,7 @@ public static class CartConfigDefaults
         ["announcements"] = new Dictionary<string, object?>
         {
             ["enabled"] = true,
-            ["text"] = "Free shipping on orders over $75 — offer ends in {TIMER}",
+            ["text"] = "750₺ üzeri siparişlerde ücretsiz kargo — teklif {TIMER} içinde bitiyor",
             ["backgroundColor"] = "#111111",
             ["textColor"] = "#ffffff",
             ["timerMinutes"] = 15,
@@ -105,7 +105,7 @@ public static class CartConfigDefaults
             ["basis"] = "cart_total",
             ["barColor"] = "#0a7c5e",
             ["backgroundColor"] = "#e8f5f0",
-            ["completedText"] = "You've unlocked all rewards!",
+            ["completedText"] = "Tüm ödülleri açtınız!",
             ["tiers"] = new object[]
             {
                 new Dictionary<string, object?>
@@ -113,16 +113,16 @@ public static class CartConfigDefaults
                     ["id"] = "tier-1",
                     ["threshold"] = 50,
                     ["type"] = "shipping",
-                    ["textBefore"] = "Add {remaining} more for free shipping",
-                    ["textAfter"] = "Free shipping unlocked!"
+                    ["textBefore"] = "Ücretsiz kargo için {remaining} daha ekleyin",
+                    ["textAfter"] = "Ücretsiz kargo açıldı!"
                 },
                 new Dictionary<string, object?>
                 {
                     ["id"] = "tier-2",
                     ["threshold"] = 100,
                     ["type"] = "discount",
-                    ["textBefore"] = "Add {remaining} more for 10% off",
-                    ["textAfter"] = "10% discount unlocked!",
+                    ["textBefore"] = "%10 indirim için {remaining} daha ekleyin",
+                    ["textAfter"] = "%10 indirim açıldı!",
                     ["discountPercent"] = 10
                 }
             }
@@ -130,8 +130,8 @@ public static class CartConfigDefaults
         ["upsells"] = new Dictionary<string, object?>
         {
             ["enabled"] = true,
-            ["title"] = "You may also like",
-            ["addButtonLabel"] = "Add",
+            ["title"] = "Bunları da beğenebilirsiniz",
+            ["addButtonLabel"] = "Ekle",
             ["useAi"] = true,
             ["algorithm"] = "related",
             ["smartVariantMatching"] = true,
@@ -141,7 +141,7 @@ public static class CartConfigDefaults
         ["recommendations"] = new Dictionary<string, object?>
         {
             ["enabled"] = true,
-            ["title"] = "Popular products",
+            ["title"] = "Popüler ürünler",
             ["emptyCartOnly"] = true,
             ["maxItems"] = 4
         },
@@ -149,8 +149,8 @@ public static class CartConfigDefaults
         {
             ["enabled"] = false,
             ["mode"] = "product",
-            ["title"] = "Add shipping protection",
-            ["description"] = "Protect your order against loss or damage",
+            ["title"] = "Kargo koruması ekle",
+            ["description"] = "Siparişinizi kayıp veya hasara karşı koruyun",
             ["productVariantId"] = "",
             ["productTitle"] = "",
             ["shippingTiers"] = Array.Empty<object>()
@@ -158,8 +158,8 @@ public static class CartConfigDefaults
         ["discountCodes"] = new Dictionary<string, object?>
         {
             ["enabled"] = true,
-            ["placeholder"] = "Discount code",
-            ["buttonLabel"] = "Apply"
+            ["placeholder"] = "İndirim kodu",
+            ["buttonLabel"] = "Uygula"
         },
         ["expressPayments"] = new Dictionary<string, object?>
         {
@@ -171,21 +171,21 @@ public static class CartConfigDefaults
             ["enabled"] = false,
             ["position"] = "bottom",
             ["imageUrl"] = "",
-            ["alt"] = "Trusted checkout"
+            ["alt"] = "Güvenli ödeme"
         },
         ["additionalNotes"] = new Dictionary<string, object?>
         {
             ["enabled"] = false,
-            ["label"] = "Order notes",
-            ["placeholder"] = "Special instructions…",
+            ["label"] = "Sipariş notu",
+            ["placeholder"] = "Özel talimatlarınız…",
             ["required"] = false
         },
         ["subscriptionUpgrades"] = new Dictionary<string, object?>
         {
             ["enabled"] = false,
-            ["title"] = "Subscribe & save",
-            ["oneTimeLabel"] = "One-time",
-            ["subscribeLabel"] = "Subscribe"
+            ["title"] = "Abone ol, tasarruf et",
+            ["oneTimeLabel"] = "Tek seferlik",
+            ["subscribeLabel"] = "Abone ol"
         },
         ["stickyCart"] = new Dictionary<string, object?>
         {
@@ -199,11 +199,11 @@ public static class CartConfigDefaults
         {
             ["openOnAddToCart"] = true,
             ["position"] = "right",
-            ["openCartSelectors"] = "a[href='/cart'], a[href$='/cart']",
-            ["addToCartSelectors"] = "form[action='/cart/add'] [type='submit'], [name='add']",
+            ["openCartSelectors"] = "a[href='/cart'], a[href$='/cart'], a[href*='/cart'], #cart-icon-bubble, .header__icon--cart, [aria-controls='CartDrawer'], [aria-controls='cart-drawer']",
+            ["addToCartSelectors"] = "form[action*='/cart/add'] [type='submit'], form[action*='/cart/add'] button, [name='add'], .product-form__submit",
             ["shadowDom"] = false,
             ["continueShopping"] = true,
-            ["continueShoppingLabel"] = "Continue shopping",
+            ["continueShoppingLabel"] = "Alışverişe devam et",
             ["goToCartOnCheckout"] = false,
             ["disableFixedFooter"] = false
         },
@@ -217,12 +217,52 @@ public static class CartConfigDefaults
         },
         ["translations"] = new Dictionary<string, object?>
         {
-            ["emptyCart"] = "Your cart is empty",
-            ["subtotal"] = "Subtotal",
-            ["savings"] = "You're saving",
-            ["checkout"] = "Checkout",
-            ["remove"] = "Remove",
-            ["quantity"] = "Qty"
+            ["emptyCart"] = "Sepetiniz boş",
+            ["subtotal"] = "Ara toplam",
+            ["savings"] = "Tasarrufunuz",
+            ["checkout"] = "Ödemeye geç",
+            ["remove"] = "Kaldır",
+            ["quantity"] = "Adet"
         }
     };
+
+    /// <summary>Mevcut İngilizce varsayılan metinleri Türkçe’ye çevirir (özel metinlere dokunmaz).</summary>
+    public static string MigrateEnglishCopyToTurkish(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return json;
+        var pairs = new (string En, string Tr)[]
+        {
+            ("Your cart is empty", "Sepetiniz boş"),
+            ("You're saving", "Tasarrufunuz"),
+            ("You've unlocked all rewards!", "Tüm ödülleri açtınız!"),
+            ("Add {remaining} more for free shipping", "Ücretsiz kargo için {remaining} daha ekleyin"),
+            ("Free shipping unlocked!", "Ücretsiz kargo açıldı!"),
+            ("Add {remaining} more for 10% off", "%10 indirim için {remaining} daha ekleyin"),
+            ("10% discount unlocked!", "%10 indirim açıldı!"),
+            ("You may also like", "Bunları da beğenebilirsiniz"),
+            ("Popular products", "Popüler ürünler"),
+            ("Add shipping protection", "Kargo koruması ekle"),
+            ("Protect your order against loss or damage", "Siparişinizi kayıp veya hasara karşı koruyun"),
+            ("Discount code", "İndirim kodu"),
+            ("Trusted checkout", "Güvenli ödeme"),
+            ("Order notes", "Sipariş notu"),
+            ("Special instructions…", "Özel talimatlarınız…"),
+            ("Special instructions...", "Özel talimatlarınız…"),
+            ("Subscribe & save", "Abone ol, tasarruf et"),
+            ("One-time", "Tek seferlik"),
+            ("Continue shopping", "Alışverişe devam et"),
+            ("Free shipping on orders over $75 — offer ends in {TIMER}", "750₺ üzeri siparişlerde ücretsiz kargo — teklif {TIMER} içinde bitiyor"),
+            ("\"Your cart\"", "\"Sepetiniz\""),
+            ("\"Subtotal\"", "\"Ara toplam\""),
+            ("\"Checkout\"", "\"Ödemeye geç\""),
+            ("\"Remove\"", "\"Kaldır\""),
+            ("\"Apply\"", "\"Uygula\""),
+            ("\"Add\"", "\"Ekle\""),
+            ("\"Qty\"", "\"Adet\""),
+            ("\"Subscribe\"", "\"Abone ol\""),
+        };
+        foreach (var (en, tr) in pairs)
+            json = json.Replace(en, tr, StringComparison.Ordinal);
+        return json;
+    }
 }

@@ -1,13 +1,11 @@
-using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using UpCard.Web.Services;
 
 namespace UpCard.Web.Pages;
 
-public class SettingsModel : PageModel
+public class SettingsModel : UpCardPageModel
 {
     private readonly CartService _carts;
     public SettingsModel(CartService carts) => _carts = carts;
@@ -20,12 +18,12 @@ public class SettingsModel : PageModel
     [BindProperty] public string Scripts { get; set; } = "";
     [BindProperty] public string TranslationsJson { get; set; } = "{}";
     public string? Message { get; set; }
-    private string Shop => User.FindFirstValue("shop") ?? Request.Query["shop"].ToString();
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (string.IsNullOrWhiteSpace(Shop)) return RedirectToPage("/Index");
-        var (_, carts) = await _carts.ListCartsAsync(Shop);
+        var gate = RequireShop();
+        if (gate != null) return gate;
+        var (_, carts) = await _carts.ListCartsAsync(ShopDomain);
         var cart = carts.FirstOrDefault(c => c.Status == "live") ?? carts.First();
         CartId = cart.Id;
         var node = JsonNode.Parse(cart.ConfigJson)!.AsObject();
@@ -41,6 +39,8 @@ public class SettingsModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        var gate = RequireShop();
+        if (gate != null) return gate;
         var cart = await _carts.GetCartAsync(CartId);
         if (cart == null) return NotFound();
         var node = JsonNode.Parse(cart.ConfigJson)!.AsObject();

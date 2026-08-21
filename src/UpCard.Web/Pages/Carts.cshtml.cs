@@ -1,40 +1,42 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using UpCard.Web.Models;
 using UpCard.Web.Services;
 
 namespace UpCard.Web.Pages;
 
-public class CartsModel : PageModel
+public class CartsModel : UpCardPageModel
 {
     private readonly CartService _carts;
     public CartsModel(CartService carts) => _carts = carts;
 
     public List<CartRecord> Carts { get; set; } = new();
     public string? Message { get; set; }
-    private string Shop => User.FindFirstValue("shop") ?? Request.Query["shop"].ToString();
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (string.IsNullOrWhiteSpace(Shop)) return RedirectToPage("/Index");
-        (_, Carts) = await _carts.ListCartsAsync(Shop);
+        var gate = RequireShop();
+        if (gate != null) return gate;
+        (_, Carts) = await _carts.ListCartsAsync(ShopDomain);
         return Page();
     }
 
     public async Task<IActionResult> OnPostCreateAsync(string name)
     {
-        await _carts.CreateCartAsync(Shop, string.IsNullOrWhiteSpace(name) ? "New cart" : name);
+        var gate = RequireShop();
+        if (gate != null) return gate;
+        await _carts.CreateCartAsync(ShopDomain, string.IsNullOrWhiteSpace(name) ? "New cart" : name);
         Message = "Cart created";
-        (_, Carts) = await _carts.ListCartsAsync(Shop);
+        (_, Carts) = await _carts.ListCartsAsync(ShopDomain);
         return Page();
     }
 
     public async Task<IActionResult> OnPostPublishAsync(string cartId)
     {
-        await _carts.PublishCartAsync(Shop, cartId);
+        var gate = RequireShop();
+        if (gate != null) return gate;
+        await _carts.PublishCartAsync(ShopDomain, cartId);
         Message = "Published";
-        (_, Carts) = await _carts.ListCartsAsync(Shop);
+        (_, Carts) = await _carts.ListCartsAsync(ShopDomain);
         return Page();
     }
 }

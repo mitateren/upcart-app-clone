@@ -1,12 +1,9 @@
-using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using UpCard.Web.Services;
 
 namespace UpCard.Web.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel : UpCardPageModel
 {
     private readonly CartService _carts;
 
@@ -25,9 +22,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        Shop = User.FindFirstValue("shop")
-               ?? Request.Query["shop"].ToString()
-               ?? "";
+        Shop = ShopDomain;
 
         if (string.IsNullOrWhiteSpace(Shop))
         {
@@ -35,11 +30,9 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        Shop = CartService.NormalizeShop(Shop);
-
         if (User.Identity?.IsAuthenticated != true)
         {
-            return Redirect($"/auth/install?shop={Uri.EscapeDataString(Shop)}&host={Uri.EscapeDataString(Request.Query["host"].ToString())}");
+            return Redirect($"/auth/install?shop={Uri.EscapeDataString(Shop)}&host={Uri.EscapeDataString(HostParam)}");
         }
 
         var (_, carts) = await _carts.ListCartsAsync(Shop);
@@ -48,8 +41,8 @@ public class IndexModel : PageModel
         LiveCartStatus = live?.Status ?? "-";
 
         var summary = await _carts.GetAnalyticsAsync(Shop);
-        var json = JsonSerializer.Serialize(summary);
-        using var doc = JsonDocument.Parse(json);
+        var json = System.Text.Json.JsonSerializer.Serialize(summary);
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
         var root = doc.RootElement;
         Opens = root.GetProperty("opens").GetInt32();
         Upsells = root.GetProperty("upsells").GetInt32();

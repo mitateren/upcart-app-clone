@@ -1,17 +1,24 @@
 @page
 @model EditorModel
 @{
-    ViewData["Title"] = "Cart Editor";
+    ViewData["Title"] = Model.Name;
+    var section = (Request.Query["section"].ToString() is { Length: > 0 } s) ? s : "design";
     var f = Model.Form;
+    bool Is(string key) => string.Equals(section, key, StringComparison.OrdinalIgnoreCase);
+    string Link(string key) => Url.Page("/Editor", new { cartId = Model.CartId, section = key })!;
 }
-
-<div class="uc-actions" style="justify-content:space-between;margin-bottom:18px">
-    <div>
-        <h1 class="uc-page-title">Cart Editor</h1>
-        <p class="uc-page-sub" style="margin:0">Upcart tarzı modüller — tasarım, ödüller, upsell, add-on ve daha fazlası</p>
+<div class="uc-actions" style="justify-content:space-between;margin-bottom:12px">
+    <div class="uc-actions">
+        <a class="uc-btn uc-btn-secondary" asp-page="/Carts">←</a>
+        <div>
+            <h1 class="uc-page-title" style="margin:0">@Model.Name</h1>
+            <span class="uc-badge @(Model.Status == "live" ? "uc-badge-live" : "uc-badge-draft")">@(Model.Status == "live" ? "canlı" : "taslak")</span>
+        </div>
     </div>
     <div class="uc-actions">
-        <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage Carts</a>
+        <input class="uc-input" asp-for="Name" style="width:180px" form="editorForm" />
+        <button class="uc-btn uc-btn-secondary" form="editorForm" type="submit" asp-page-handler="Reset">Sıfırla</button>
+        <button class="uc-btn uc-btn-primary" form="editorForm" type="submit">Kaydet</button>
     </div>
 </div>
 
@@ -20,218 +27,166 @@
     <div class="uc-alert uc-alert-ok">@Model.Message</div>
 }
 
-<form method="post" id="editorForm">
+<form method="post" id="editorForm" class="uc-editor-3">
     <input type="hidden" asp-for="CartId" />
 
-    <div class="uc-card" style="margin-bottom:16px">
-        <div class="uc-card-bd uc-grid uc-grid-3" style="align-items:end">
-            <div class="uc-field" style="margin:0">
-                <label asp-for="Name">Cart name</label>
-                <input class="uc-input" asp-for="Name" />
+    <nav class="uc-mod-nav">
+        <div class="group">Genel</div>
+        <a class="@(Is("design")?"on":"")" href="@Link("design")">Tasarım</a>
+        <a class="@(Is("header")?"on":"")" href="@Link("header")">Başlık</a>
+        <div class="group">Gövde</div>
+        <a class="@(Is("announcements")?"on":"")" href="@Link("announcements")">Duyurular</a>
+        <a class="@(Is("rewards")?"on":"")" href="@Link("rewards")">Kademeli ödüller</a>
+        <a class="@(Is("upsells")?"on":"")" href="@Link("upsells")">Ek satışlar</a>
+        <a class="@(Is("items")?"on":"")" href="@Link("items")">Sepet ürünleri</a>
+        <div class="group">Alt bilgi</div>
+        <a class="@(Is("addons")?"on":"")" href="@Link("addons")">Eklentiler</a>
+        <a class="@(Is("discounts")?"on":"")" href="@Link("discounts")">İndirim kodları</a>
+        <a class="@(Is("express")?"on":"")" href="@Link("express")">Hızlı ödeme / Güven</a>
+        <a class="@(Is("behavior")?"on":"")" href="@Link("behavior")">Davranış</a>
+        <a class="@(Is("custom")?"on":"")" href="@Link("custom")">Özel CSS / HTML</a>
+    </nav>
+
+    <div class="uc-mod-panel">
+        <section class="uc-sec @(Is("design")?"show":"")">
+            <h2>Tasarım</h2>
+            <div class="uc-switch-row"><span>Etkin</span><label class="uc-check"><input asp-for="Form.DesignEnabled" type="checkbox" /></label></div>
+            <div class="uc-switch-row"><span>Üstü çizili fiyatları göster</span><label class="uc-check"><input asp-for="Form.ShowStrikethrough" type="checkbox" /></label></div>
+            <div class="uc-switch-row"><span>Tasarrufu göster</span><label class="uc-check"><input asp-for="Form.ShowSavings" type="checkbox" /></label></div>
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field"><label>Arka plan</label><input class="uc-input" type="color" asp-for="Form.BackgroundColor" /></div>
+                <div class="uc-field"><label>Metin</label><input class="uc-input" type="color" asp-for="Form.TextColor" /></div>
+                <div class="uc-field"><label>Vurgu</label><input class="uc-input" type="color" asp-for="Form.AccentColor" /></div>
+                <div class="uc-field"><label>Buton</label><input class="uc-input" type="color" asp-for="Form.ButtonBackground" /></div>
+                <div class="uc-field"><label>Buton metni</label><input class="uc-input" type="color" asp-for="Form.ButtonTextColor" /></div>
+                <div class="uc-field"><label>Köşe yuvarlaklığı</label><input class="uc-input" type="number" asp-for="Form.BorderRadius" /></div>
             </div>
-            <div class="uc-field" style="margin:0">
-                <label>Status</label>
-                <div>
-                    <span class="uc-badge @(Model.Status == "live" ? "uc-badge-live" : "uc-badge-draft")">@Model.Status</span>
-                </div>
+        </section>
+
+        <section class="uc-sec @(Is("header")?"show":"")">
+            <h2>Başlık</h2>
+            <div class="uc-switch-row"><span>Etkin</span><label class="uc-check"><input asp-for="Form.HeaderEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Başlık metni</label><input class="uc-input" asp-for="Form.HeaderTitle" /></div>
+            <div class="uc-switch-row"><span>Ürün sayısını göster</span><label class="uc-check"><input asp-for="Form.ShowItemCount" type="checkbox" /></label></div>
+            <div class="uc-switch-row"><span>Logo göster</span><label class="uc-check"><input asp-for="Form.ShowLogo" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Logo URL</label><input class="uc-input" asp-for="Form.LogoUrl" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("announcements")?"show":"")">
+            <h2>Duyurular</h2>
+            <div class="uc-switch-row"><span>Etkin</span><label class="uc-check"><input asp-for="Form.AnnouncementsEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Metin</label><input class="uc-input" asp-for="Form.AnnouncementText" /></div>
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field"><label>Arka plan</label><input class="uc-input" type="color" asp-for="Form.AnnouncementBg" /></div>
+                <div class="uc-field"><label>Metin rengi</label><input class="uc-input" type="color" asp-for="Form.AnnouncementFg" /></div>
+                <div class="uc-field"><label>Zamanlayıcı (dk)</label><input class="uc-input" type="number" asp-for="Form.TimerMinutes" /></div>
+                <div class="uc-switch-row" style="border:0"><span>Zamanlayıcıyı göster</span><label class="uc-check"><input asp-for="Form.ShowTimer" type="checkbox" /></label></div>
             </div>
-            <div class="uc-actions" style="justify-content:flex-end">
-                <button class="uc-btn uc-btn-secondary" type="submit" asp-page-handler="Reset">Reset defaults</button>
-                <button class="uc-btn uc-btn-primary" type="submit">Save cart</button>
+        </section>
+
+        <section class="uc-sec @(Is("rewards")?"show":"")">
+            <h2>Kademeli ödüller</h2>
+            <div class="uc-switch-row"><span>Etkin</span><label class="uc-check"><input asp-for="Form.RewardsEnabled" type="checkbox" /></label></div>
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field"><label>Çubuk rengi</label><input class="uc-input" type="color" asp-for="Form.RewardBarColor" /></div>
+                <div class="uc-field"><label>İz arka planı</label><input class="uc-input" type="color" asp-for="Form.RewardBg" /></div>
             </div>
-        </div>
+            <div class="uc-field"><label>Tamamlandı metni</label><input class="uc-input" asp-for="Form.RewardCompletedText" /></div>
+            <div class="uc-grid uc-grid-2">
+                <div class="uc-field"><label>Kademe 1 eşiği</label><input class="uc-input" type="number" asp-for="Form.Tier1Threshold" /></div>
+                <div class="uc-field"><label>Kademe 1 önce</label><input class="uc-input" asp-for="Form.Tier1TextBefore" /></div>
+                <div class="uc-field"><label>Kademe 1 sonra</label><input class="uc-input" asp-for="Form.Tier1TextAfter" /></div>
+                <div class="uc-field"><label>Kademe 2 eşiği</label><input class="uc-input" type="number" asp-for="Form.Tier2Threshold" /></div>
+                <div class="uc-field"><label>Kademe 2 %</label><input class="uc-input" type="number" asp-for="Form.Tier2DiscountPercent" /></div>
+                <div class="uc-field"><label>Kademe 2 önce</label><input class="uc-input" asp-for="Form.Tier2TextBefore" /></div>
+                <div class="uc-field"><label>Kademe 2 sonra</label><input class="uc-input" asp-for="Form.Tier2TextAfter" /></div>
+            </div>
+        </section>
+
+        <section class="uc-sec @(Is("upsells")?"show":"")">
+            <h2>Ek satışlar &amp; öneriler</h2>
+            <div class="uc-switch-row"><span>Ek satışlar</span><label class="uc-check"><input asp-for="Form.UpsellsEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Başlık</label><input class="uc-input" asp-for="Form.UpsellsTitle" /></div>
+            <div class="uc-field"><label>Ekle butonu</label><input class="uc-input" asp-for="Form.UpsellsButton" /></div>
+            <div class="uc-field"><label>Maks. ürün</label><input class="uc-input" type="number" asp-for="Form.UpsellsMaxItems" /></div>
+            <div class="uc-switch-row"><span>İlgili ürün önerileri</span><label class="uc-check"><input asp-for="Form.UpsellsUseAi" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Manuel ürün ID’leri</label><input class="uc-input" asp-for="Form.ManualProductIds" /></div>
+            <div class="uc-switch-row"><span>Boş sepet önerileri</span><label class="uc-check"><input asp-for="Form.RecommendationsEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Boş sepet başlığı</label><input class="uc-input" asp-for="Form.RecommendationsTitle" /></div>
+            <div class="uc-switch-row"><span>Sadece boşken</span><label class="uc-check"><input asp-for="Form.RecommendationsEmptyOnly" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Boş sepet maks.</label><input class="uc-input" type="number" asp-for="Form.RecommendationsMax" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("items")?"show":"")">
+            <h2>Sepet ürünleri</h2>
+            <div class="uc-field"><label>Boş sepet</label><input class="uc-input" asp-for="Form.TrEmptyCart" /></div>
+            <div class="uc-field"><label>Kaldır</label><input class="uc-input" asp-for="Form.TrRemove" /></div>
+            <div class="uc-switch-row"><span>Abonelik yükseltmeleri</span><label class="uc-check"><input asp-for="Form.SubscriptionEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Abonelik başlığı</label><input class="uc-input" asp-for="Form.SubscriptionTitle" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("addons")?"show":"")">
+            <h2>Eklentiler</h2>
+            <div class="uc-switch-row"><span>Etkin</span><label class="uc-check"><input asp-for="Form.AddonsEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Başlık</label><input class="uc-input" asp-for="Form.AddonsTitle" /></div>
+            <div class="uc-field"><label>Açıklama</label><input class="uc-input" asp-for="Form.AddonsDescription" /></div>
+            <div class="uc-field"><label>Varyant ID</label><input class="uc-input" asp-for="Form.AddonsVariantId" /></div>
+            <div class="uc-field"><label>Ürün adı</label><input class="uc-input" asp-for="Form.AddonsProductTitle" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("discounts")?"show":"")">
+            <h2>İndirim kodları</h2>
+            <div class="uc-switch-row"><span>Alanı göster</span><label class="uc-check"><input asp-for="Form.DiscountCodesEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Yer tutucu</label><input class="uc-input" asp-for="Form.DiscountPlaceholder" /></div>
+            <div class="uc-field"><label>Buton</label><input class="uc-input" asp-for="Form.DiscountButton" /></div>
+            <div class="uc-field"><label>Ara toplam</label><input class="uc-input" asp-for="Form.TrSubtotal" /></div>
+            <div class="uc-field"><label>Ödeme</label><input class="uc-input" asp-for="Form.TrCheckout" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("express")?"show":"")">
+            <h2>Hızlı ödeme · Güven · Notlar</h2>
+            <div class="uc-switch-row"><span>Hızlı ödemeler</span><label class="uc-check"><input asp-for="Form.ExpressEnabled" type="checkbox" /></label></div>
+            <div class="uc-switch-row"><span>Güven rozetleri</span><label class="uc-check"><input asp-for="Form.TrustEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Rozet görseli</label><input class="uc-input" asp-for="Form.TrustImageUrl" /></div>
+            <div class="uc-field"><label>Alt metin</label><input class="uc-input" asp-for="Form.TrustAlt" /></div>
+            <div class="uc-switch-row"><span>Sipariş notu</span><label class="uc-check"><input asp-for="Form.NotesEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Not etiketi</label><input class="uc-input" asp-for="Form.NotesLabel" /></div>
+            <div class="uc-field"><label>Yer tutucu</label><input class="uc-input" asp-for="Form.NotesPlaceholder" /></div>
+        </section>
+
+        <section class="uc-sec @(Is("behavior")?"show":"")">
+            <h2>Davranış</h2>
+            <div class="uc-switch-row"><span>Sepete eklenince aç</span><label class="uc-check"><input asp-for="Form.OpenOnAddToCart" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Çekmece tarafı</label><select class="uc-select" asp-for="Form.DrawerPosition"><option value="right">Sağ</option><option value="left">Sol</option></select></div>
+            <div class="uc-switch-row"><span>Alışverişe devam</span><label class="uc-check"><input asp-for="Form.ContinueShopping" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Devam et etiketi</label><input class="uc-input" asp-for="Form.ContinueShoppingLabel" /></div>
+            <div class="uc-switch-row"><span>Yapışkan sepet</span><label class="uc-check"><input asp-for="Form.StickyEnabled" type="checkbox" /></label></div>
+            <div class="uc-field"><label>Yapışkan konum</label><select class="uc-select" asp-for="Form.StickyPosition"><option value="bottom-right">Sağ alt</option><option value="bottom-left">Sol alt</option></select></div>
+            <div class="uc-field"><label>Yapışkan arka plan</label><input class="uc-input" type="color" asp-for="Form.StickyBg" /></div>
+            <div class="uc-field"><label>Yapışkan ikon</label><input class="uc-input" type="color" asp-for="Form.StickyIcon" /></div>
+            <div class="uc-switch-row"><span>Sayıyı göster</span><label class="uc-check"><input asp-for="Form.StickyShowCount" type="checkbox" /></label></div>
+            <input type="hidden" asp-for="Form.FontFamily" />
+        </section>
+
+        <section class="uc-sec @(Is("custom")?"show":"")">
+            <h2>Özel CSS / HTML</h2>
+            <div class="uc-field"><label>Özel CSS</label><textarea class="uc-textarea" asp-for="Form.CustomCss" rows="6"></textarea></div>
+            <div class="uc-field"><label>Duyurulardan önce</label><textarea class="uc-textarea" asp-for="Form.HtmlBeforeAnnouncements" rows="3"></textarea></div>
+            <div class="uc-field"><label>Ürünler arasında</label><textarea class="uc-textarea" asp-for="Form.HtmlBetweenItems" rows="3"></textarea></div>
+            <div class="uc-field"><label>Ödemenin üstü</label><textarea class="uc-textarea" asp-for="Form.HtmlAboveCheckout" rows="3"></textarea></div>
+            <div class="uc-field"><label>Script’ler</label><textarea class="uc-textarea" asp-for="Form.CustomScripts" rows="3"></textarea></div>
+        </section>
     </div>
 
-    <div class="uc-editor-layout">
-        <div>
-            <details class="uc-module" open>
-                <summary>Design <span class="uc-badge uc-badge-on">core</span></summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Enabled</span><label class="uc-check"><input asp-for="Form.DesignEnabled" type="checkbox" /></label></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Background</label><input class="uc-input" type="color" asp-for="Form.BackgroundColor" /></div>
-                        <div class="uc-field"><label>Text</label><input class="uc-input" type="color" asp-for="Form.TextColor" /></div>
-                        <div class="uc-field"><label>Button background</label><input class="uc-input" type="color" asp-for="Form.ButtonBackground" /></div>
-                        <div class="uc-field"><label>Button text</label><input class="uc-input" type="color" asp-for="Form.ButtonTextColor" /></div>
-                        <div class="uc-field"><label>Accent (rewards)</label><input class="uc-input" type="color" asp-for="Form.AccentColor" /></div>
-                        <div class="uc-field"><label>Border radius</label><input class="uc-input" type="number" asp-for="Form.BorderRadius" /></div>
-                    </div>
-                    <div class="uc-switch-row"><span>Strikethrough prices</span><label class="uc-check"><input asp-for="Form.ShowStrikethrough" type="checkbox" /></label></div>
-                    <div class="uc-switch-row"><span>Show savings</span><label class="uc-check"><input asp-for="Form.ShowSavings" type="checkbox" /></label></div>
-                </div>
-            </details>
-
-            <details class="uc-module" open>
-                <summary>Header</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Enabled</span><label class="uc-check"><input asp-for="Form.HeaderEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Title</label><input class="uc-input" asp-for="Form.HeaderTitle" /></div>
-                    <div class="uc-switch-row"><span>Show item count</span><label class="uc-check"><input asp-for="Form.ShowItemCount" type="checkbox" /></label></div>
-                    <div class="uc-switch-row"><span>Show logo</span><label class="uc-check"><input asp-for="Form.ShowLogo" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Logo URL</label><input class="uc-input" asp-for="Form.LogoUrl" placeholder="https://…" /></div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Announcements &amp; timer</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Enabled</span><label class="uc-check"><input asp-for="Form.AnnouncementsEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Text</label><input class="uc-input" asp-for="Form.AnnouncementText" /><div class="hint">Use {TIMER} for countdown</div></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Background</label><input class="uc-input" type="color" asp-for="Form.AnnouncementBg" /></div>
-                        <div class="uc-field"><label>Text color</label><input class="uc-input" type="color" asp-for="Form.AnnouncementFg" /></div>
-                        <div class="uc-field"><label>Timer minutes</label><input class="uc-input" type="number" asp-for="Form.TimerMinutes" /></div>
-                        <div class="uc-switch-row" style="border:0"><span>Show timer</span><label class="uc-check"><input asp-for="Form.ShowTimer" type="checkbox" /></label></div>
-                    </div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Rewards · Free shipping bar</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Enabled</span><label class="uc-check"><input asp-for="Form.RewardsEnabled" type="checkbox" /></label></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Bar color</label><input class="uc-input" type="color" asp-for="Form.RewardBarColor" /></div>
-                        <div class="uc-field"><label>Track background</label><input class="uc-input" type="color" asp-for="Form.RewardBg" /></div>
-                    </div>
-                    <div class="uc-field"><label>All rewards unlocked text</label><input class="uc-input" asp-for="Form.RewardCompletedText" /></div>
-                    <h3 style="font-size:13px;margin:8px 0">Tier 1 — Free shipping</h3>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Threshold</label><input class="uc-input" type="number" asp-for="Form.Tier1Threshold" /></div>
-                        <div class="uc-field"><label>Text before</label><input class="uc-input" asp-for="Form.Tier1TextBefore" /></div>
-                        <div class="uc-field" style="grid-column:1/-1"><label>Text after</label><input class="uc-input" asp-for="Form.Tier1TextAfter" /></div>
-                    </div>
-                    <h3 style="font-size:13px;margin:8px 0">Tier 2 — Discount</h3>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Threshold</label><input class="uc-input" type="number" asp-for="Form.Tier2Threshold" /></div>
-                        <div class="uc-field"><label>Discount %</label><input class="uc-input" type="number" asp-for="Form.Tier2DiscountPercent" /></div>
-                        <div class="uc-field"><label>Text before</label><input class="uc-input" asp-for="Form.Tier2TextBefore" /></div>
-                        <div class="uc-field"><label>Text after</label><input class="uc-input" asp-for="Form.Tier2TextAfter" /></div>
-                    </div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Upsells &amp; recommendations</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>In-cart upsells</span><label class="uc-check"><input asp-for="Form.UpsellsEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Title</label><input class="uc-input" asp-for="Form.UpsellsTitle" /></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Add button</label><input class="uc-input" asp-for="Form.UpsellsButton" /></div>
-                        <div class="uc-field"><label>Max items</label><input class="uc-input" type="number" asp-for="Form.UpsellsMaxItems" /></div>
-                    </div>
-                    <div class="uc-switch-row"><span>Product recommendations (AI / related)</span><label class="uc-check"><input asp-for="Form.UpsellsUseAi" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Manual product IDs</label><input class="uc-input" asp-for="Form.ManualProductIds" placeholder="gid://shopify/Product/123, 456" /><div class="hint">Virgülle ayır. Boşsa Shopify recommendations kullanılır.</div></div>
-                    <hr style="border:0;border-top:1px solid var(--uc-border);margin:16px 0" />
-                    <div class="uc-switch-row"><span>Empty-cart recommendations</span><label class="uc-check"><input asp-for="Form.RecommendationsEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Title</label><input class="uc-input" asp-for="Form.RecommendationsTitle" /></div>
-                    <div class="uc-switch-row"><span>Only when cart empty</span><label class="uc-check"><input asp-for="Form.RecommendationsEmptyOnly" type="checkbox" /></label></div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Add-ons · Trust · Notes · Express</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Add-ons / shipping protection</span><label class="uc-check"><input asp-for="Form.AddonsEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Title</label><input class="uc-input" asp-for="Form.AddonsTitle" /></div>
-                    <div class="uc-field"><label>Description</label><input class="uc-input" asp-for="Form.AddonsDescription" /></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Variant ID</label><input class="uc-input" asp-for="Form.AddonsVariantId" /></div>
-                        <div class="uc-field"><label>Product title</label><input class="uc-input" asp-for="Form.AddonsProductTitle" /></div>
-                    </div>
-                    <div class="uc-switch-row"><span>Discount code field</span><label class="uc-check"><input asp-for="Form.DiscountCodesEnabled" type="checkbox" /></label></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Placeholder</label><input class="uc-input" asp-for="Form.DiscountPlaceholder" /></div>
-                        <div class="uc-field"><label>Button</label><input class="uc-input" asp-for="Form.DiscountButton" /></div>
-                    </div>
-                    <div class="uc-switch-row"><span>Express payments</span><label class="uc-check"><input asp-for="Form.ExpressEnabled" type="checkbox" /></label></div>
-                    <div class="uc-switch-row"><span>Trust badges</span><label class="uc-check"><input asp-for="Form.TrustEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Badge image URL</label><input class="uc-input" asp-for="Form.TrustImageUrl" /></div>
-                    <div class="uc-switch-row"><span>Order notes</span><label class="uc-check"><input asp-for="Form.NotesEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Notes label</label><input class="uc-input" asp-for="Form.NotesLabel" /></div>
-                    <div class="uc-switch-row"><span>Subscription upgrades UI</span><label class="uc-check"><input asp-for="Form.SubscriptionEnabled" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Subscription title</label><input class="uc-input" asp-for="Form.SubscriptionTitle" /></div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Sticky cart &amp; behavior</summary>
-                <div class="body">
-                    <div class="uc-switch-row"><span>Sticky cart button</span><label class="uc-check"><input asp-for="Form.StickyEnabled" type="checkbox" /></label></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field">
-                            <label>Position</label>
-                            <select class="uc-select" asp-for="Form.StickyPosition">
-                                <option value="bottom-right">Bottom right</option>
-                                <option value="bottom-left">Bottom left</option>
-                            </select>
-                        </div>
-                        <div class="uc-field"><label>Background</label><input class="uc-input" type="color" asp-for="Form.StickyBg" /></div>
-                    </div>
-                    <div class="uc-switch-row"><span>Show count badge</span><label class="uc-check"><input asp-for="Form.StickyShowCount" type="checkbox" /></label></div>
-                    <div class="uc-switch-row"><span>Open on add to cart</span><label class="uc-check"><input asp-for="Form.OpenOnAddToCart" type="checkbox" /></label></div>
-                    <div class="uc-field">
-                        <label>Drawer side</label>
-                        <select class="uc-select" asp-for="Form.DrawerPosition">
-                            <option value="right">Right</option>
-                            <option value="left">Left</option>
-                        </select>
-                    </div>
-                    <div class="uc-switch-row"><span>Continue shopping</span><label class="uc-check"><input asp-for="Form.ContinueShopping" type="checkbox" /></label></div>
-                    <div class="uc-field"><label>Continue label</label><input class="uc-input" asp-for="Form.ContinueShoppingLabel" /></div>
-                </div>
-            </details>
-
-            <details class="uc-module">
-                <summary>Custom CSS / HTML · Translations</summary>
-                <div class="body">
-                    <div class="uc-field"><label>Custom CSS</label><textarea class="uc-textarea" asp-for="Form.CustomCss" rows="5"></textarea></div>
-                    <div class="uc-field"><label>HTML before announcements</label><textarea class="uc-textarea" asp-for="Form.HtmlBeforeAnnouncements" rows="3"></textarea></div>
-                    <div class="uc-field"><label>HTML between items</label><textarea class="uc-textarea" asp-for="Form.HtmlBetweenItems" rows="3"></textarea></div>
-                    <div class="uc-field"><label>HTML above checkout</label><textarea class="uc-textarea" asp-for="Form.HtmlAboveCheckout" rows="3"></textarea></div>
-                    <div class="uc-field"><label>Custom scripts</label><textarea class="uc-textarea" asp-for="Form.CustomScripts" rows="3"></textarea></div>
-                    <div class="uc-grid uc-grid-2">
-                        <div class="uc-field"><label>Empty cart</label><input class="uc-input" asp-for="Form.TrEmptyCart" /></div>
-                        <div class="uc-field"><label>Subtotal</label><input class="uc-input" asp-for="Form.TrSubtotal" /></div>
-                        <div class="uc-field"><label>Checkout</label><input class="uc-input" asp-for="Form.TrCheckout" /></div>
-                        <div class="uc-field"><label>Remove</label><input class="uc-input" asp-for="Form.TrRemove" /></div>
-                    </div>
-                </div>
-            </details>
-
-            <div class="uc-actions" style="margin-top:8px">
-                <button class="uc-btn uc-btn-primary" type="submit">Save cart</button>
-            </div>
+    <aside class="uc-preview" style="--preview-bg:@f.BackgroundColor;--preview-fg:@f.TextColor;--preview-btn:@f.ButtonBackground;--preview-btn-fg:@f.ButtonTextColor;--preview-accent:@f.AccentColor">
+        <div style="font-size:12px;font-weight:700;color:#6d7175;margin-bottom:12px;text-transform:uppercase">Canlı önizleme</div>
+        <div class="uc-drawer-mock">
+            @if (f.AnnouncementsEnabled){<div class="ann" style="background:@f.AnnouncementBg;color:@f.AnnouncementFg">@(string.IsNullOrWhiteSpace(f.AnnouncementText)?"Duyuru":f.AnnouncementText)</div>}
+            <div class="hd"><span>@(f.HeaderTitle) · 2</span><span>×</span></div>
+            @if (f.RewardsEnabled){<div style="padding:0 16px;font-size:12px">@f.Tier1TextBefore</div><div class="bar" style="background:@f.RewardBg"><span style="background:@f.RewardBarColor"></span></div>}
+            <div class="item"><div class="swatch"></div><div><strong>Örnek ürün</strong><div style="font-size:12px;opacity:.7">₺84,00</div></div></div>
+            @if (f.UpsellsEnabled){<div style="padding:10px 16px;font-size:13px;font-weight:650">@f.UpsellsTitle</div>}
+            <div class="foot"><div class="cta">@f.TrCheckout</div></div>
         </div>
-
-        <aside class="uc-preview" id="previewPane"
-               style="--preview-bg:@f.BackgroundColor;--preview-fg:@f.TextColor;--preview-btn:@f.ButtonBackground;--preview-btn-fg:@f.ButtonTextColor;--preview-accent:@f.AccentColor">
-            <div style="font-size:12px;font-weight:700;color:#6d7175;margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em">Live preview</div>
-            <div class="uc-drawer-mock">
-                @if (f.AnnouncementsEnabled)
-                {
-                    <div class="ann" style="background:@f.AnnouncementBg;color:@f.AnnouncementFg">@(string.IsNullOrWhiteSpace(f.AnnouncementText) ? "Announcement" : f.AnnouncementText)</div>
-                }
-                <div class="hd">
-                    <span>@(f.HeaderTitle)</span>
-                    <span>×</span>
-                </div>
-                @if (f.RewardsEnabled)
-                {
-                    <div style="padding:0 16px;font-size:12px;color:#555">@f.Tier1TextBefore</div>
-                    <div class="bar" style="background:@f.RewardBg"><span style="background:@f.RewardBarColor"></span></div>
-                }
-                <div class="item"><div class="swatch"></div><div><strong>Sample product</strong><div style="font-size:12px;opacity:.7">₺499</div></div></div>
-                @if (f.UpsellsEnabled)
-                {
-                    <div style="padding:10px 16px;font-size:13px;font-weight:650">@f.UpsellsTitle</div>
-                    <div class="item"><div class="swatch" style="background:#cde"></div><div><strong>Upsell item</strong><div style="font-size:12px">@f.UpsellsButton</div></div></div>
-                }
-                <div class="foot">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px"><span>@f.TrSubtotal</span><strong>₺499</strong></div>
-                    <div class="cta">@f.TrCheckout</div>
-                </div>
-            </div>
-        </aside>
-    </div>
+    </aside>
 </form>

@@ -1,0 +1,60 @@
+@page
+@model StickyModel
+@{
+    ViewData["Title"] = "Sticky cart";
+}
+
+<div class="uc-actions" style="justify-content:space-between;margin-bottom:12px">
+    <h1 class="uc-page-title" style="margin:0">Sticky Cart</h1>
+    <span class="uc-badge @(Model.Enabled ? "uc-badge-live" : "uc-badge-off")">
+        @(Model.Enabled ? "Sticky cart button enabled" : "Sticky cart button disabled")
+    </span>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="uc-alert uc-alert-ok">@Model.Message</div>
+}
+
+<form method="post" class="uc-editor-layout">
+    <input type="hidden" asp-for="CartId" />
+    <div>
+        <div class="uc-card" style="margin-bottom:16px">
+            <div class="uc-card-hd"><h2>Button design</h2></div>
+            <div class="uc-card-bd">
+                <div class="uc-switch-row"><span>Enable sticky cart</span><label class="uc-check"><input asp-for="Enabled" type="checkbox" /></label></div>
+                <div class="uc-grid uc-grid-2">
+                    <div class="uc-field"><label>Background</label><input class="uc-input" type="color" asp-for="BackgroundColor" /></div>
+                    <div class="uc-field"><label>Icon color</label><input class="uc-input" type="color" asp-for="IconColor" /></div>
+                    <div class="uc-field"><label>Quantity badge bg</label><input class="uc-input" type="color" asp-for="QtyBg" /></div>
+                    <div class="uc-field"><label>Quantity badge text</label><input class="uc-input" type="color" asp-for="QtyFg" /></div>
+                </div>
+                <div class="uc-field">
+                    <label>Position</label>
+                    <select class="uc-select" asp-for="Position">
+                        <option value="bottom-right">Bottom Right</option>
+                        <option value="bottom-left">Bottom Left</option>
+                    </select>
+                </div>
+                <div class="uc-switch-row"><span>Show quantity badge</span><label class="uc-check"><input asp-for="ShowCount" type="checkbox" /></label></div>
+            </div>
+        </div>
+        <div class="uc-card">
+            <div class="uc-card-hd"><h2>Custom CSS</h2></div>
+            <div class="uc-card-bd">
+                <textarea class="uc-textarea" asp-for="CustomCss" rows="8" placeholder=".upcard-sticky { }"></textarea>
+                <div class="uc-field"><button class="uc-btn uc-btn-primary" type="submit">Save</button></div>
+            </div>
+        </div>
+    </div>
+    <aside class="uc-preview" style="min-height:360px;position:relative">
+        <div style="font-size:12px;font-weight:700;color:#6d7175;margin-bottom:12px;text-transform:uppercase">Preview</div>
+        <div style="position:absolute;@(Model.Position == "bottom-left" ? "left:24px" : "right:24px");bottom:24px;width:56px;height:56px;border-radius:50%;background:@Model.BackgroundColor;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.2)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2" stroke="@Model.IconColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="20" r="1.5" fill="@Model.IconColor"/><circle cx="17" cy="20" r="1.5" fill="@Model.IconColor"/></svg>
+            @if (Model.ShowCount)
+            {
+                <span style="position:absolute;top:-4px;right:-4px;background:@Model.QtyBg;color:@Model.QtyFg;border-radius:999px;font-size:11px;font-weight:700;min-width:20px;height:20px;display:grid;place-items:center">1</span>
+            }
+        </div>
+    </aside>
+</form>

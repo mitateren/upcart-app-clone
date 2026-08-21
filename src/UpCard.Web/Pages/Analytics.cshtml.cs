@@ -1,12 +1,10 @@
-using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using UpCard.Web.Services;
 
 namespace UpCard.Web.Pages;
 
-public class AnalyticsModel : PageModel
+public class AnalyticsModel : UpCardPageModel
 {
     private readonly CartService _carts;
     public AnalyticsModel(CartService carts) => _carts = carts;
@@ -20,12 +18,11 @@ public class AnalyticsModel : PageModel
     public double CheckoutRate { get; set; }
     public int Days { get; set; } = 30;
 
-    private string Shop => User.FindFirstValue("shop") ?? Request.Query["shop"].ToString();
-
     public async Task<IActionResult> OnGetAsync()
     {
-        if (string.IsNullOrWhiteSpace(Shop)) return RedirectToPage("/Index");
-        var summary = await _carts.GetAnalyticsAsync(Shop);
+        var gate = RequireShop();
+        if (gate != null) return gate;
+        var summary = await _carts.GetAnalyticsAsync(ShopDomain);
         using var doc = JsonDocument.Parse(JsonSerializer.Serialize(summary));
         var root = doc.RootElement;
         Opens = root.GetProperty("opens").GetInt32();

@@ -4,8 +4,13 @@
     ViewData["Title"] = "Discounts";
 }
 
-<h1 class="uc-page-title">Discounts</h1>
-<p class="uc-page-sub">Spend thresholds · free gift · free shipping kuralları</p>
+<div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
+    <div>
+        <h1 class="uc-page-title" style="margin:0">Discounts</h1>
+        <p class="uc-page-sub" style="margin:6px 0 0">Triggered rewards · free shipping · % off · free gifts</p>
+    </div>
+    <a class="uc-btn uc-btn-primary" asp-page="/DiscountEdit">+ Create discount</a>
+</div>
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
@@ -13,46 +18,70 @@
 }
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Yeni kural</h2></div>
-    <div class="uc-card-bd">
-        <form method="post" asp-page-handler="Create" class="uc-grid uc-grid-2">
-            <div class="uc-field"><label>Name</label><input class="uc-input" name="name" value="Spend & save" /></div>
-            <div class="uc-field">
-                <label>Type</label>
-                <select class="uc-select" name="ruleType">
-                    <option value="discount">Discount %</option>
-                    <option value="free_gift">Free gift</option>
-                    <option value="free_shipping">Free shipping</option>
-                </select>
-            </div>
-            <div class="uc-field"><label>Min cart total</label><input class="uc-input" name="minCartTotal" value="50" /></div>
-            <div class="uc-field"><label>Discount %</label><input class="uc-input" name="discountPercent" value="10" /></div>
-            <div><button class="uc-btn uc-btn-primary" type="submit">Create rule</button></div>
-        </form>
-    </div>
+    <div class="uc-card-hd"><h2>Live discounts</h2></div>
+    @if (!Model.Live.Any())
+    {
+        <div class="uc-card-bd" style="color:var(--uc-muted)">No live discounts. Publish a discount from your drafts to make it live.</div>
+    }
+    else
+    {
+        <table class="uc-table">
+            <thead><tr><th>Name</th><th>Triggers</th><th>Rewards</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var r in Model.Live)
+            {
+                <tr>
+                    <td><strong>@r.Name</strong></td>
+                    <td>@DiscountsModel.TriggerSummary(r)</td>
+                    <td><span class="uc-badge uc-badge-live">@DiscountsModel.RewardSummary(r)</span></td>
+                    <td class="uc-actions">
+                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Edit</a>
+                        <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Delete</button></form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="uc-card" style="margin-bottom:16px">
+    <div class="uc-card-hd"><h2>Draft discounts</h2></div>
+    @if (!Model.Draft.Any())
+    {
+        <div class="uc-card-bd" style="color:var(--uc-muted)">No draft discounts. Discounts created here won't go live until you publish them.</div>
+    }
+    else
+    {
+        <table class="uc-table">
+            <thead><tr><th>Name</th><th>Triggers</th><th>Rewards</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var r in Model.Draft)
+            {
+                <tr>
+                    <td><strong>@r.Name</strong></td>
+                    <td>@DiscountsModel.TriggerSummary(r)</td>
+                    <td><span class="uc-badge uc-badge-draft">@DiscountsModel.RewardSummary(r)</span></td>
+                    <td>
+                        <div class="uc-actions">
+                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Edit</a>
+                            <form method="post" asp-page-handler="Publish"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-primary uc-btn-sm">Publish</button></form>
+                            <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Delete</button></form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
 </div>
 
 <div class="uc-card">
-    <table class="uc-table">
-        <thead><tr><th>Name</th><th>Type</th><th>Status</th><th></th></tr></thead>
-        <tbody>
-        @foreach (var r in Model.Rules)
-        {
-            <tr>
-                <td>
-                    <strong>@r.Name</strong>
-                    <div style="font-size:11px;color:#6d7175;margin-top:4px">@r.ConditionsJson</div>
-                </td>
-                <td>@r.RuleType</td>
-                <td><span class="uc-badge @(r.Enabled ? "uc-badge-on" : "uc-badge-off")">@(r.Enabled ? "enabled" : "off")</span></td>
-                <td>
-                    <div class="uc-actions">
-                        <form method="post" asp-page-handler="Toggle"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-secondary uc-btn-sm">Toggle</button></form>
-                        <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Delete</button></form>
-                    </div>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="uc-card-hd"><h2>Discount combinations</h2></div>
+    <div class="uc-card-bd">
+        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Product discounts</strong> — applies alongside other product-level discounts</label>
+        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Order discounts</strong> — product discounts first, then order-level</label>
+        <label class="uc-check" style="display:block"><input type="checkbox" disabled /> <strong>Shipping discounts</strong> — combine with free shipping for largest eligible discount</label>
+        <p class="hint" style="margin-top:12px;color:var(--uc-muted);font-size:12px">Combination toggles sync to Shopify Discount API in a later release.</p>
+    </div>
 </div>

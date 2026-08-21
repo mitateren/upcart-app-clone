@@ -9,6 +9,23 @@
   --upcard-z: 2147483000;
 }
 
+/* Hide native Shopify theme cart UI when UpCard replaces the cart */
+html.upcard-replace-cart cart-drawer,
+html.upcard-replace-cart cart-notification,
+html.upcard-replace-cart #CartDrawer,
+html.upcard-replace-cart #CartDrawer-Overlay,
+html.upcard-replace-cart #cart-notification,
+html.upcard-replace-cart .cart-notification,
+html.upcard-replace-cart #CartPopup,
+html.upcard-replace-cart .drawer--cart,
+html.upcard-replace-cart [id="CartDrawer"],
+html.upcard-replace-cart .ajax-cart,
+html.upcard-replace-cart .site-header__cart-drawer {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 .upcard-overlay {
   position: fixed;
   inset: 0;

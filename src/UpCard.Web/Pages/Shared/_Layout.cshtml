@@ -3,9 +3,21 @@
 @inject IOptions<ShopifyOptions> ShopifyOpts
 @{
     var path = ViewContext.HttpContext.Request.Path.Value ?? "/";
-    string NavClass(string page) => path.Equals(page, StringComparison.OrdinalIgnoreCase)
-        || (page != "/" && path.StartsWith(page, StringComparison.OrdinalIgnoreCase))
-        ? "active" : "";
+    var shop = ViewData["Shop"] as string ?? Context.Request.Query["shop"].ToString();
+    var host = ViewData["Host"] as string ?? Context.Request.Query["host"].ToString();
+    string Q(string page)
+    {
+        var qs = new List<string>();
+        if (!string.IsNullOrWhiteSpace(shop)) qs.Add("shop=" + Uri.EscapeDataString(shop));
+        if (!string.IsNullOrWhiteSpace(host)) qs.Add("host=" + Uri.EscapeDataString(host));
+        var url = page.StartsWith("/") ? page : "/" + page;
+        if (qs.Count > 0) url += "?" + string.Join("&", qs);
+        return url;
+    }
+    string NavClass(params string[] pages) =>
+        pages.Any(p => path.Equals(p, StringComparison.OrdinalIgnoreCase)
+                       || (p != "/" && path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+            ? "active" : "";
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -18,28 +30,69 @@
     <link rel="stylesheet" href="~/css/upcard-admin.css" asp-append-version="true" />
 </head>
 <body>
+@* Shopify Admin sidebar nav — keeps navigation inside the embedded app iframe *@
+<ui-nav-menu>
+    <a href="@Q("/")" rel="home">Ana sayfa</a>
+    <a href="@Q("/Carts")">Sepetler</a>
+    <a href="@Q("/Discounts")">İndirimler</a>
+    <a href="@Q("/Sticky")">Yapışkan sepet</a>
+    <a href="@Q("/Analytics")">Analitik</a>
+    <a href="@Q("/Help")">Yardım &amp; Destek</a>
+</ui-nav-menu>
+
 <div class="uc-shell">
     <aside class="uc-sidebar">
         <div class="uc-brand">
             <div class="uc-brand-mark">U</div>
             <div>
                 <h1>UpCard</h1>
-                <span>Cart drawer · Upsell</span>
+                <span>Cart Drawer</span>
             </div>
         </div>
         <nav class="uc-nav">
-            <a class="@NavClass("/")" asp-page="/Index">Home</a>
-            <a class="@NavClass("/Editor")" asp-page="/Editor">Cart Editor</a>
-            <a class="@NavClass("/Carts")" asp-page="/Carts">Manage Carts</a>
-            <a class="@NavClass("/Discounts")" asp-page="/Discounts">Discounts</a>
-            <a class="@NavClass("/Analytics")" asp-page="/Analytics">Analytics</a>
-            <a class="@NavClass("/Settings")" asp-page="/Settings">Settings</a>
+            <a class="@NavClass("/", "/Index") uc-app-link" href="@Q("/")">Ana sayfa</a>
+            <a class="@NavClass("/Carts", "/Editor", "/Onboarding") uc-app-link" href="@Q("/Carts")">Sepetler</a>
+            <a class="@NavClass("/Discounts", "/DiscountEdit") uc-app-link" href="@Q("/Discounts")">İndirimler</a>
+            <a class="@NavClass("/Sticky") uc-app-link" href="@Q("/Sticky")">Yapışkan sepet</a>
+            <a class="@NavClass("/Analytics") uc-app-link" href="@Q("/Analytics")">Analitik</a>
+            <a class="@NavClass("/Help") uc-app-link" href="@Q("/Help")">Yardım &amp; Destek</a>
         </nav>
     </aside>
     <main class="uc-main">
         @RenderBody()
     </main>
 </div>
+<script>
+(function () {
+  var shop = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(shop ?? ""));
+  var host = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(host ?? ""));
+
+  function withShopHost(href) {
+    if (!href || href.startsWith("http") || href.startsWith("//") || href.startsWith("#") || href.startsWith("mailto:")) return href;
+    if (!shop || href.indexOf("shop=") !== -1) return href;
+    var join = href.indexOf("?") >= 0 ? "&" : "?";
+    var next = href + join + "shop=" + encodeURIComponent(shop);
+    if (host) next += "&host=" + encodeURIComponent(host);
+    return next;
+  }
+
+  // Keep all in-app navigations inside the Shopify iframe (never break out to top)
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a[href]");
+    if (!a) return;
+    if (a.target === "_blank" || a.hasAttribute("download")) return;
+    var href = a.getAttribute("href");
+    if (!href || href.startsWith("http") || href.startsWith("//") || href.startsWith("#") || href.startsWith("mailto:")) return;
+
+    // External Shopify admin links (theme editor etc.) may be absolute https://admin.shopify.com — allow default
+    e.preventDefault();
+    e.stopPropagation();
+    var next = withShopHost(href);
+    // Assign on the iframe window only
+    window.location.assign(next);
+  }, true);
+})();
+</script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

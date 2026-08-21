@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using UpCard.Web.Data;
+using UpCard.Web.Models;
 using UpCard.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         o.Cookie.Name = "upcard_session";
         o.Cookie.SameSite = SameSiteMode.None;
         o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        // CHIPS: Shopify admin iframe = third-party context
+        o.Cookie.Extensions.Add("Partitioned");
     });
 builder.Services.AddAuthorization();
 builder.Services.Configure<ForwardedHeadersOptions>(o =>
@@ -55,6 +58,24 @@ try
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+    // Mevcut sepet config’lerindeki İngilizce varsayılan metinleri Türkçe’ye çevir
+    var carts = db.Carts.ToList();
+    var changed = false;
+    foreach (var cart in carts)
+    {
+        var next = CartConfigDefaults.MigrateEnglishCopyToTurkish(cart.ConfigJson ?? "");
+        if (!string.Equals(next, cart.ConfigJson, StringComparison.Ordinal))
+        {
+            cart.ConfigJson = next;
+            changed = true;
+        }
+        if (string.Equals(cart.Name, "Default cart", StringComparison.Ordinal))
+        {
+            cart.Name = "Varsayılan sepet";
+            changed = true;
+        }
+    }
+    if (changed) db.SaveChanges();
 }
 catch (Exception ex)
 {
@@ -65,9 +86,23 @@ catch (Exception ex)
 
 app.UseForwardedHeaders();
 
+// Allow embedding inside Shopify Admin (fixes "bağlanmayı reddetti" on in-app navigation)
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.OnStarting(() =>
+    {
+        ctx.Response.Headers.Remove("X-Frame-Options");
+        ctx.Response.Headers.ContentSecurityPolicy =
+            "frame-ancestors https://admin.shopify.com https://*.shopify.com https://admin.shopify.com https://*.myshopify.com;";
+        return Task.CompletedTask;
+    });
+    await next();
+});
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
+    // HSTS can be kept; do not set X-Frame-Options via other middleware
     app.UseHsts();
 }
 
@@ -133,8 +168,21 @@ app.MapGet("/auth/callback", async (
         new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) });
 
     var host = req.Query["host"].ToString();
+    var cookieOpt = new CookieOptions
+    {
+        IsEssential = true,
+        Secure = true,
+        SameSite = SameSiteMode.None,
+        MaxAge = TimeSpan.FromDays(30),
+        Path = "/"
+    };
+    cookieOpt.Extensions.Add("Partitioned");
+    ctx.Response.Cookies.Append("upcard_shop", shop, cookieOpt);
+    if (!string.IsNullOrEmpty(host))
+        ctx.Response.Cookies.Append("upcard_host", host, cookieOpt);
+
     var redir = string.IsNullOrEmpty(host)
-        ? "/"
+        ? $"/?shop={Uri.EscapeDataString(shop)}"
         : $"/?shop={Uri.EscapeDataString(shop)}&host={Uri.EscapeDataString(host)}";
     return Results.Redirect(redir);
 });
