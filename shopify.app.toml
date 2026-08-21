@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "bf5472c84b033938e4f3cf3e9abd7eaa"
-name = "UpCard"
+name = "Upcart AlpMi"
 application_url = "https://upcart.tisortgetir.com"
 embedded = true
 
@@ -33,8 +33,8 @@ prefix = "apps"
 
 [shop.metafields.app.live_cart_config]
 type = "json"
-name = "UpCard Live Cart Config"
-description = "Published UpCard cart drawer configuration"
+name = "Upcart AlpMi Canlı Sepet"
+description = "Yayınlanmış Upcart AlpMi sepet çekmecesi yapılandırması"
 access.admin = "merchant_read_write"
 access.storefront = "public_read"
 

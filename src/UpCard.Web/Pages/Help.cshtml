@@ -1,29 +1,29 @@
 @page
 @model HelpModel
 @{
-    ViewData["Title"] = "Help & Support";
+    ViewData["Title"] = "Yardım & Destek";
 }
-<h1 class="uc-page-title">Help &amp; Support</h1>
-<p class="uc-page-sub">Setup tips for UpCard cart drawer</p>
+<h1 class="uc-page-title">Yardım &amp; Destek</h1>
+<p class="uc-page-sub">Upcart AlpMi sepet çekmecesi kurulum ipuçları</p>
 
 <div class="uc-grid uc-grid-2">
     <div class="uc-card">
-        <div class="uc-card-hd"><h2>Setup guide</h2></div>
+        <div class="uc-card-hd"><h2>Kurulum rehberi</h2></div>
         <div class="uc-card-bd">
             <ol class="uc-steps">
-                <li><a asp-page="/Onboarding">Run the style + modules wizard</a></li>
-                <li>Themes → App embeds → enable <strong>UpCard Bridge</strong></li>
-                <li><a asp-page="/Carts">Publish</a> a cart</li>
-                <li>Create <a asp-page="/Discounts">triggered discounts</a></li>
-                <li>Configure <a asp-page="/Sticky">sticky cart</a></li>
+                <li><a asp-page="/Onboarding">Stil + modül sihirbazını çalıştırın</a></li>
+                <li>Temalar → App embeds → <strong>Upcart AlpMi Bridge</strong>’i açın</li>
+                <li><a asp-page="/Carts">Bir sepeti yayınlayın</a></li>
+                <li><a asp-page="/Discounts">Tetiklemeli indirimler</a> oluşturun</li>
+                <li><a asp-page="/Sticky">Yapışkan sepeti</a> yapılandırın</li>
             </ol>
         </div>
     </div>
     <div class="uc-card">
-        <div class="uc-card-hd"><h2>Docs</h2></div>
+        <div class="uc-card-hd"><h2>Dokümantasyon</h2></div>
         <div class="uc-card-bd">
-            <p style="margin-top:0;color:var(--uc-muted)">Cart Editor modules mirror Upcart: Design, Announcements, Rewards, Upsells, Add-ons, Discount codes, Express, Trust badges, Sticky cart, Custom CSS/HTML.</p>
-            <a class="uc-btn uc-btn-secondary" asp-page="/Editor">Open cart editor</a>
+            <p style="margin-top:0;color:var(--uc-muted)">Sepet editörü modülleri: Tasarım, Duyurular, Ödüller, Ek satışlar, Eklentiler, İndirim kodları, Hızlı ödeme, Güven rozetleri, Yapışkan sepet, Özel CSS/HTML.</p>
+            <a class="uc-btn uc-btn-secondary" asp-page="/Editor">Sepet editörünü aç</a>
         </div>
     </div>
 </div>

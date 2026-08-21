@@ -57,7 +57,7 @@ public class StickyModel : UpCardPageModel
         if (!string.IsNullOrWhiteSpace(CustomCss))
             node["customCss"] = CustomCss;
         await _carts.UpdateCartConfigAsync(CartId, node.ToJsonString());
-        Message = "Sticky cart saved";
+        Message = "Yapışkan sepet kaydedildi";
         return await OnGetAsync();
     }
 }

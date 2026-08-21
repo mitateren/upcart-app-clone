@@ -1,23 +1,23 @@
 @page
 @model OnboardingModel
 @{
-    ViewData["Title"] = "Setup";
+    ViewData["Title"] = "Kurulum";
 }
 
 @if (Model.Step == 1)
 {
-    <h1 class="uc-page-title">UpCard Cart Drawer</h1>
-    <p class="uc-page-sub"><strong>Select a base style</strong> — Colours can be adjusted later in the cart editor — focus on the overall layout and feel.</p>
+    <h1 class="uc-page-title">Upcart AlpMi Sepet Çekmecesi</h1>
+    <p class="uc-page-sub"><strong>Temel bir stil seçin</strong> — Renkleri daha sonra sepet editöründen değiştirebilirsiniz; şimdilik genel görünüme odaklanın.</p>
 
     <form method="post" asp-page-handler="Next">
         <input type="hidden" name="Step" value="1" />
         <div class="uc-style-grid">
             @foreach (var s in new[] {
-                ("theme", "Your Live Theme"),
-                ("default", "Default"),
-                ("ivory", "Ivory"),
-                ("electric", "Electric"),
-                ("natural", "Natural")
+                ("theme", "Canlı temanız"),
+                ("default", "Varsayılan"),
+                ("ivory", "Fildişi"),
+                ("electric", "Elektrik"),
+                ("natural", "Doğal")
             })
             {
                 <label class="uc-style-card @(Model.Style == s.Item1 ? "selected" : "")">
@@ -28,30 +28,30 @@
             }
         </div>
         <div class="uc-wizard-foot">
-            <span>Step 1 of 2</span>
-            <button class="uc-btn uc-btn-primary" type="submit">Next</button>
+            <span>Adım 1 / 2</span>
+            <button class="uc-btn uc-btn-primary" type="submit">İleri</button>
         </div>
     </form>
 }
 else
 {
-    <h1 class="uc-page-title">Recommended modules</h1>
-    <p class="uc-page-sub">Pick any modules to include in your cart — you can add or remove these anytime later in the cart editor.</p>
+    <h1 class="uc-page-title">Önerilen modüller</h1>
+    <p class="uc-page-sub">Sepetinize eklemek istediğiniz modülleri seçin — daha sonra editörden ekleyip çıkarabilirsiniz.</p>
 
     <form method="post" asp-page-handler="Save">
         <div class="uc-module-pick-grid">
-            <label class="uc-pick-card"><input asp-for="ModUpsells" type="checkbox" /><strong>Upsells</strong><span>Present targeted upsell offers to increase order value.</span></label>
-            <label class="uc-pick-card"><input asp-for="ModRewards" type="checkbox" /><strong>Rewards</strong><span>Incentivize customers with reward tiers &amp; free shipping.</span></label>
-            <label class="uc-pick-card"><input asp-for="ModRecommendations" type="checkbox" /><strong>Recommendations</strong><span>Show product recommendations to boost AOV.</span></label>
-            <label class="uc-pick-card"><input asp-for="ModAddons" type="checkbox" /><strong>Add ons</strong><span>Let customers add complementary products with a toggle.</span></label>
-            <label class="uc-pick-card"><input asp-for="ModAnnouncements" type="checkbox" /><strong>Announcements</strong><span>Display promotional banners at the top of the cart.</span></label>
-            <label class="uc-pick-card"><input asp-for="ModSubscriptions" type="checkbox" /><strong>Subscriptions</strong><span>Offer subscription upgrades in the cart drawer.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModUpsells" type="checkbox" /><strong>Ek satışlar</strong><span>Sipariş tutarını artırmak için hedefli teklifler gösterin.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModRewards" type="checkbox" /><strong>Ödüller</strong><span>Kademeli ödüller ve ücretsiz kargo ile teşvik edin.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModRecommendations" type="checkbox" /><strong>Öneriler</strong><span>Ortalama sipariş değerini artırmak için ürün önerin.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModAddons" type="checkbox" /><strong>Eklentiler</strong><span>Tamamlayıcı ürünleri tek tıkla eklettirin.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModAnnouncements" type="checkbox" /><strong>Duyurular</strong><span>Sepetin üstünde kampanya bandı gösterin.</span></label>
+            <label class="uc-pick-card"><input asp-for="ModSubscriptions" type="checkbox" /><strong>Abonelikler</strong><span>Sepet içinde abonelik yükseltmesi sunun.</span></label>
         </div>
         <div class="uc-wizard-foot">
-            <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding" asp-route-step="1">Previous</a>
+            <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding" asp-route-step="1">Geri</a>
             <div class="uc-actions">
-                <span style="align-self:center;color:var(--uc-muted)">Step 2 of 2</span>
-                <button class="uc-btn uc-btn-primary" type="submit">Save as draft</button>
+                <span style="align-self:center;color:var(--uc-muted)">Adım 2 / 2</span>
+                <button class="uc-btn uc-btn-primary" type="submit">Taslak olarak kaydet</button>
             </div>
         </div>
     </form>
@@ -59,11 +59,11 @@ else
 
 <aside class="uc-preview" style="margin-top:24px;max-width:360px">
     <div class="uc-drawer-mock">
-        <div class="ann">Your products are reserved for 4:58 minutes!</div>
-        <div class="hd"><span>Cart · 2</span><span>×</span></div>
-        <div style="padding:0 16px;font-size:12px">You're away from free shipping!</div>
+        <div class="ann">Ürünleriniz 4:58 dakika rezerve edildi!</div>
+        <div class="hd"><span>Sepet · 2</span><span>×</span></div>
+        <div style="padding:0 16px;font-size:12px">Ücretsiz kargoya az kaldı!</div>
         <div class="bar"><span></span></div>
-        <div class="item"><div class="swatch"></div><div><strong>Placeholder product</strong><div style="font-size:12px;opacity:.7">$84.00</div></div></div>
-        <div class="foot"><div class="cta">Checkout</div></div>
+        <div class="item"><div class="swatch"></div><div><strong>Örnek ürün</strong><div style="font-size:12px;opacity:.7">₺84,00</div></div></div>
+        <div class="foot"><div class="cta">Ödemeye geç</div></div>
     </div>
 </aside>

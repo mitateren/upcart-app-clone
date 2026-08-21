@@ -1,7 +1,7 @@
 @page "{id?}"
 @model DiscountEditModel
 @{
-    ViewData["Title"] = string.IsNullOrEmpty(Model.Id) ? "Create a discount" : "Edit discount";
+    ViewData["Title"] = string.IsNullOrEmpty(Model.Id) ? "İndirim oluştur" : "İndirimi düzenle";
 }
 
 <div class="uc-actions" style="justify-content:space-between;margin-bottom:16px">
@@ -15,42 +15,42 @@
     <input type="hidden" asp-for="Id" />
 
     <div class="uc-card" style="margin-bottom:16px">
-        <div class="uc-card-hd"><h2>Overall</h2></div>
+        <div class="uc-card-hd"><h2>Genel</h2></div>
         <div class="uc-card-bd">
-            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">These fields will also be used in your cart template on the storefront.</p>
-            <div class="uc-field"><label>Title *</label><input class="uc-input" asp-for="Title" maxlength="50" /></div>
-            <div class="uc-field"><label>Discount code *</label><input class="uc-input" asp-for="Code" maxlength="25" /></div>
-            <div class="uc-field"><label>Description *</label><textarea class="uc-textarea" asp-for="Description" rows="3"></textarea></div>
+            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">Bu alanlar mağaza ön yüzündeki sepet şablonunda da kullanılır.</p>
+            <div class="uc-field"><label>Başlık *</label><input class="uc-input" asp-for="Title" maxlength="50" /></div>
+            <div class="uc-field"><label>İndirim kodu *</label><input class="uc-input" asp-for="Code" maxlength="25" /></div>
+            <div class="uc-field"><label>Açıklama *</label><textarea class="uc-textarea" asp-for="Description" rows="3"></textarea></div>
         </div>
     </div>
 
     <div class="uc-card" style="margin-bottom:16px">
-        <div class="uc-card-hd"><h2>Triggers (up to 2)</h2></div>
+        <div class="uc-card-hd"><h2>Tetikleyiciler (en fazla 2)</h2></div>
         <div class="uc-card-bd">
-            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">Conditions that must be met to offer a reward.</p>
+            <p style="margin-top:0;color:var(--uc-muted);font-size:13px">Ödül sunmak için sağlanması gereken koşullar.</p>
             <div class="uc-grid uc-grid-2">
                 <div class="uc-field">
-                    <label>Trigger 1</label>
+                    <label>Tetikleyici 1</label>
                     <select class="uc-select" asp-for="TriggerType">
-                        <option value="cart_total">Cart total</option>
-                        <option value="cart_quantity">Cart quantity</option>
-                        <option value="products">Specific products</option>
-                        <option value="collections">Specific collections</option>
-                        <option value="subscription">Subscription</option>
-                        <option value="logged_in">Customer is logged in</option>
+                        <option value="cart_total">Sepet tutarı</option>
+                        <option value="cart_quantity">Sepet adedi</option>
+                        <option value="products">Belirli ürünler</option>
+                        <option value="collections">Belirli koleksiyonlar</option>
+                        <option value="subscription">Abonelik</option>
+                        <option value="logged_in">Müşteri giriş yapmış</option>
                     </select>
                 </div>
-                <div class="uc-field"><label>Minimum amount / qty</label><input class="uc-input" type="number" asp-for="TriggerMin" /></div>
+                <div class="uc-field"><label>Minimum tutar / adet</label><input class="uc-input" type="number" asp-for="TriggerMin" /></div>
                 <div class="uc-field">
-                    <label>Trigger 2 (optional)</label>
+                    <label>Tetikleyici 2 (isteğe bağlı)</label>
                     <select class="uc-select" asp-for="TriggerType2">
-                        <option value="">— none —</option>
-                        <option value="cart_total">Cart total</option>
-                        <option value="cart_quantity">Cart quantity</option>
-                        <option value="products">Specific products</option>
-                        <option value="collections">Specific collections</option>
-                        <option value="subscription">Subscription</option>
-                        <option value="logged_in">Customer is logged in</option>
+                        <option value="">— yok —</option>
+                        <option value="cart_total">Sepet tutarı</option>
+                        <option value="cart_quantity">Sepet adedi</option>
+                        <option value="products">Belirli ürünler</option>
+                        <option value="collections">Belirli koleksiyonlar</option>
+                        <option value="subscription">Abonelik</option>
+                        <option value="logged_in">Müşteri giriş yapmış</option>
                     </select>
                 </div>
                 <div class="uc-field"><label>Minimum 2</label><input class="uc-input" type="number" asp-for="TriggerMin2" /></div>
@@ -59,25 +59,25 @@
     </div>
 
     <div class="uc-card" style="margin-bottom:16px">
-        <div class="uc-card-hd"><h2>Reward</h2></div>
+        <div class="uc-card-hd"><h2>Ödül</h2></div>
         <div class="uc-card-bd">
             <div class="uc-grid uc-grid-2">
                 <div class="uc-field">
-                    <label>Reward type</label>
+                    <label>Ödül türü</label>
                     <select class="uc-select" asp-for="RewardType">
-                        <option value="free_shipping">Free shipping</option>
-                        <option value="percentage">Percentage (%)</option>
-                        <option value="fixed">Fixed amount</option>
-                        <option value="free_gift">Free gift</option>
+                        <option value="free_shipping">Ücretsiz kargo</option>
+                        <option value="percentage">Yüzde (%)</option>
+                        <option value="fixed">Sabit tutar</option>
+                        <option value="free_gift">Hediye ürün</option>
                     </select>
                 </div>
-                <div class="uc-field"><label>Value (% or amount)</label><input class="uc-input" type="number" asp-for="RewardValue" /></div>
+                <div class="uc-field"><label>Değer (% veya tutar)</label><input class="uc-input" type="number" asp-for="RewardValue" /></div>
             </div>
         </div>
     </div>
 
     <div class="uc-actions" style="justify-content:flex-end">
-        <button class="uc-btn uc-btn-secondary" type="submit" asp-page-handler="SaveDraft">Save draft</button>
-        <button class="uc-btn uc-btn-primary" type="submit" asp-page-handler="Publish">Publish &amp; exit</button>
+        <button class="uc-btn uc-btn-secondary" type="submit" asp-page-handler="SaveDraft">Taslak kaydet</button>
+        <button class="uc-btn uc-btn-primary" type="submit" asp-page-handler="Publish">Yayınla ve çık</button>
     </div>
 </form>

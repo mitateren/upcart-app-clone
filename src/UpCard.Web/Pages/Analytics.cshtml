@@ -1,47 +1,47 @@
 @page
 @model AnalyticsModel
 @{
-    ViewData["Title"] = "Analytics";
+    ViewData["Title"] = "Analitik";
 }
 
 <div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
     <div>
-        <h1 class="uc-page-title" style="margin:0">Analytics</h1>
-        <p class="uc-page-sub" style="margin:6px 0 0">All carts · Last @Model.Days days</p>
+        <h1 class="uc-page-title" style="margin:0">Analitik</h1>
+        <p class="uc-page-sub" style="margin:6px 0 0">Tüm sepetler · Son @Model.Days gün</p>
     </div>
-    <span class="uc-badge uc-badge-draft">Compare: None</span>
+    <span class="uc-badge uc-badge-draft">Karşılaştırma: Yok</span>
 </div>
 
 <div class="uc-grid uc-grid-2" style="margin-bottom:16px">
     <div class="uc-card uc-metric">
-        <div class="label">Revenue (placeholder)</div>
-        <div class="value">0.00TL</div>
+        <div class="label">Gelir (yakında)</div>
+        <div class="value">0,00 TL</div>
         <div style="height:48px;margin-top:12px;background:linear-gradient(180deg,rgba(0,128,96,.15),transparent);border-radius:8px"></div>
     </div>
     <div class="uc-card uc-metric">
-        <div class="label">Conversion rate</div>
+        <div class="label">Dönüşüm oranı</div>
         <div class="value">@Model.CheckoutRate%</div>
         <div style="height:48px;margin-top:12px;background:linear-gradient(180deg,rgba(99,102,241,.15),transparent);border-radius:8px"></div>
     </div>
 </div>
 
 <div class="uc-grid uc-grid-3" style="margin-bottom:16px">
-    <div class="uc-card uc-metric"><div class="label">Cart impressions</div><div class="value">@Model.Opens</div></div>
-    <div class="uc-card uc-metric"><div class="label">Upsell adds</div><div class="value">@Model.Upsells</div></div>
-    <div class="uc-card uc-metric"><div class="label">Checkouts completed</div><div class="value">@Model.Checkouts</div></div>
+    <div class="uc-card uc-metric"><div class="label">Sepet görüntülenme</div><div class="value">@Model.Opens</div></div>
+    <div class="uc-card uc-metric"><div class="label">Ek satış ekleme</div><div class="value">@Model.Upsells</div></div>
+    <div class="uc-card uc-metric"><div class="label">Tamamlanan ödeme</div><div class="value">@Model.Checkouts</div></div>
 </div>
 
 <div class="uc-card">
-    <div class="uc-card-hd"><h2>Event breakdown</h2></div>
+    <div class="uc-card-hd"><h2>Olay dökümü</h2></div>
     <div class="uc-card-bd">
         <table class="uc-table">
-            <thead><tr><th>Event</th><th>Count</th></tr></thead>
+            <thead><tr><th>Olay</th><th>Adet</th></tr></thead>
             <tbody>
-            <tr><td>open</td><td>@Model.Opens</td></tr>
-            <tr><td>add_upsell</td><td>@Model.Upsells</td></tr>
-            <tr><td>checkout_click</td><td>@Model.Checkouts</td></tr>
-            <tr><td>reward_tier_reached</td><td>@Model.RewardReached</td></tr>
-            <tr><td>discount_applied</td><td>@Model.DiscountApplied</td></tr>
+            <tr><td>açılış</td><td>@Model.Opens</td></tr>
+            <tr><td>ek satış ekleme</td><td>@Model.Upsells</td></tr>
+            <tr><td>ödeme tıklama</td><td>@Model.Checkouts</td></tr>
+            <tr><td>ödül kademesi</td><td>@Model.RewardReached</td></tr>
+            <tr><td>indirim uygulandı</td><td>@Model.DiscountApplied</td></tr>
             </tbody>
         </table>
     </div>

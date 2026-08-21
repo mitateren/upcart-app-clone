@@ -1,11 +1,11 @@
 @page
 @model SettingsModel
 @{
-    ViewData["Title"] = "Settings";
+    ViewData["Title"] = "Ayarlar";
 }
 
-<h1 class="uc-page-title">Settings</h1>
-<p class="uc-page-sub">Custom CSS / HTML ve çeviriler (canlı cart). Detaylı modül ayarları için Cart Editor’ı kullan.</p>
+<h1 class="uc-page-title">Ayarlar</h1>
+<p class="uc-page-sub">Özel CSS / HTML ve çeviriler (canlı sepet). Detaylı modül ayarları için sepet editörünü kullanın.</p>
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
@@ -15,12 +15,12 @@
 <form method="post" class="uc-card">
     <div class="uc-card-bd">
         <input type="hidden" asp-for="CartId" />
-        <div class="uc-field"><label>Custom CSS</label><textarea class="uc-textarea" asp-for="CustomCss" rows="6"></textarea></div>
-        <div class="uc-field"><label>HTML before announcements</label><textarea class="uc-textarea" asp-for="BeforeAnnouncements" rows="3"></textarea></div>
-        <div class="uc-field"><label>HTML between items</label><textarea class="uc-textarea" asp-for="BetweenItems" rows="3"></textarea></div>
-        <div class="uc-field"><label>HTML above checkout</label><textarea class="uc-textarea" asp-for="AboveCheckout" rows="3"></textarea></div>
-        <div class="uc-field"><label>Scripts</label><textarea class="uc-textarea" asp-for="Scripts" rows="3"></textarea></div>
-        <div class="uc-field"><label>Translations JSON</label><textarea class="uc-textarea" asp-for="TranslationsJson" rows="8"></textarea></div>
-        <button class="uc-btn uc-btn-primary" type="submit">Save settings</button>
+        <div class="uc-field"><label>Özel CSS</label><textarea class="uc-textarea" asp-for="CustomCss" rows="6"></textarea></div>
+        <div class="uc-field"><label>Duyurulardan önce HTML</label><textarea class="uc-textarea" asp-for="BeforeAnnouncements" rows="3"></textarea></div>
+        <div class="uc-field"><label>Ürünler arasında HTML</label><textarea class="uc-textarea" asp-for="BetweenItems" rows="3"></textarea></div>
+        <div class="uc-field"><label>Ödemenin üstü HTML</label><textarea class="uc-textarea" asp-for="AboveCheckout" rows="3"></textarea></div>
+        <div class="uc-field"><label>Script’ler</label><textarea class="uc-textarea" asp-for="Scripts" rows="3"></textarea></div>
+        <div class="uc-field"><label>Çeviriler JSON</label><textarea class="uc-textarea" asp-for="TranslationsJson" rows="8"></textarea></div>
+        <button class="uc-btn uc-btn-primary" type="submit">Ayarları kaydet</button>
     </div>
 </form>

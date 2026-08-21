@@ -40,7 +40,7 @@ public class DiscountsModel : UpCardPageModel
         rule.Enabled = true;
         rule.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
-        Message = "Discount published";
+        Message = "İndirim yayınlandı";
         return await OnGetAsync();
     }
 
@@ -63,7 +63,7 @@ public class DiscountsModel : UpCardPageModel
             if (triggers == null || triggers.Count == 0)
             {
                 if (node?["minCartTotal"] != null)
-                    return $"Cart total ({node["minCartTotal"]}+)";
+                    return $"Sepet tutarı ({node["minCartTotal"]}+)";
                 return "—";
             }
             return string.Join(" · ", triggers.Select(t =>
@@ -71,12 +71,12 @@ public class DiscountsModel : UpCardPageModel
                 var type = t?["type"]?.GetValue<string>() ?? "";
                 return type switch
                 {
-                    "cart_total" => $"Cart total ({t?["min"]}+)",
-                    "cart_quantity" => $"Cart items ({t?["min"]}+)",
-                    "products" => "Specific products",
-                    "collections" => "Specific collections",
-                    "subscription" => "Subscription",
-                    "logged_in" => "Logged in",
+                    "cart_total" => $"Sepet tutarı ({t?["min"]}+)",
+                    "cart_quantity" => $"Sepet adedi ({t?["min"]}+)",
+                    "products" => "Belirli ürünler",
+                    "collections" => "Belirli koleksiyonlar",
+                    "subscription" => "Abonelik",
+                    "logged_in" => "Giriş yapmış",
                     _ => type
                 };
             }));
@@ -92,10 +92,10 @@ public class DiscountsModel : UpCardPageModel
             var reward = a?["reward"]?.GetValue<string>() ?? r.RuleType;
             return reward switch
             {
-                "free_shipping" => "Free Shipping",
-                "percentage" => $"{a?["value"] ?? a?["discountPercent"]}% off",
-                "fixed" => $"{a?["value"]} off",
-                "free_gift" => "Free gift",
+                "free_shipping" => "Ücretsiz kargo",
+                "percentage" => $"%{a?["value"] ?? a?["discountPercent"]} indirim",
+                "fixed" => $"{a?["value"]} indirim",
+                "free_gift" => "Hediye ürün",
                 _ => r.RuleType
             };
         }

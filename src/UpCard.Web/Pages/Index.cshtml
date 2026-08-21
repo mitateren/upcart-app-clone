@@ -1,22 +1,21 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Welcome";
-    // Upcart home redirects conceptually to dashboard — keep as welcome hub
+    ViewData["Title"] = "Ana sayfa";
 }
 
 @if (Model.NeedsInstall)
 {
-    <h1 class="uc-page-title">Welcome to UpCard</h1>
-    <p class="uc-page-sub">Shopify Admin içinden uygulamayı aç veya mağaza domain’ini gir.</p>
+    <h1 class="uc-page-title">Upcart AlpMi’ye hoş geldiniz</h1>
+    <p class="uc-page-sub">Shopify Admin içinden uygulamayı açın veya mağaza domain’ini girin.</p>
     <div class="uc-card">
         <div class="uc-card-bd">
             <form method="get" action="/auth/install" class="uc-grid uc-grid-2" style="align-items:end">
                 <div class="uc-field" style="margin:0">
-                    <label>Shop domain</label>
+                    <label>Mağaza domain</label>
                     <input class="uc-input" name="shop" placeholder="magaza.myshopify.com" required />
                 </div>
-                <button class="uc-btn uc-btn-primary" type="submit">Install</button>
+                <button class="uc-btn uc-btn-primary" type="submit">Yükle</button>
             </form>
         </div>
     </div>
@@ -24,63 +23,63 @@
 else
 {
     <div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
-        <h1 class="uc-page-title" style="margin:0">Welcome to UpCard 🎉</h1>
+        <h1 class="uc-page-title" style="margin:0">Upcart AlpMi’ye hoş geldiniz 🎉</h1>
         <div class="uc-actions">
-            <span class="uc-badge uc-badge-draft">Last 30 days</span>
-            <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage all carts</a>
+            <span class="uc-badge uc-badge-draft">Son 30 gün</span>
+            <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Tüm sepetleri yönet</a>
         </div>
     </div>
     <p class="uc-page-sub">@Model.Shop</p>
 
     <div class="uc-grid uc-grid-3" style="margin-bottom:16px">
-        <div class="uc-card uc-metric"><div class="label">Add-ons revenue</div><div class="value">0.00TL</div></div>
-        <div class="uc-card uc-metric"><div class="label">Upsell revenue</div><div class="value">0.00TL</div></div>
-        <div class="uc-card uc-metric"><div class="label">Subscriptions revenue</div><div class="value">0.00TL</div></div>
+        <div class="uc-card uc-metric"><div class="label">Eklenti geliri</div><div class="value">0,00 TL</div></div>
+        <div class="uc-card uc-metric"><div class="label">Ek satış geliri</div><div class="value">0,00 TL</div></div>
+        <div class="uc-card uc-metric"><div class="label">Abonelik geliri</div><div class="value">0,00 TL</div></div>
     </div>
 
     <div class="uc-card" style="margin-bottom:16px">
         <div class="uc-card-bd">
             <div class="uc-actions" style="justify-content:space-between;margin-bottom:10px">
                 <div>
-                    <strong>Live carts</strong>
+                    <strong>Canlı sepetler</strong>
                     <span class="uc-badge @(Model.LiveCartStatus == "live" ? "uc-badge-live" : "uc-badge-draft")" style="margin-left:8px">
-                        @(Model.LiveCartStatus == "live" ? Model.LiveCartName : "No live carts configured")
+                        @(Model.LiveCartStatus == "live" ? Model.LiveCartName : "Canlı sepet yok")
                     </span>
-                    <span class="uc-badge uc-badge-off" style="margin-left:6px">App embed check</span>
+                    <span class="uc-badge uc-badge-off" style="margin-left:6px">App embed kontrolü</span>
                 </div>
             </div>
-            <p style="color:var(--uc-muted);margin:0 0 14px">Publish your cart to see it live, and start earning with your cart.</p>
+            <p style="color:var(--uc-muted);margin:0 0 14px">Sepetinizi yayınlayın, canlıda görün ve satışa başlayın.</p>
             <div class="uc-actions">
-                <a class="uc-btn uc-btn-primary" href="https://admin.shopify.com/store/@Model.Shop.Replace(".myshopify.com","")/themes/current/editor?context=apps" target="_blank" rel="noopener">Enable app embed</a>
-                <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Manage carts</a>
-                <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Setup wizard</a>
+                <a class="uc-btn uc-btn-primary" href="https://admin.shopify.com/store/@Model.Shop.Replace(".myshopify.com","")/themes/current/editor?context=apps" target="_blank" rel="noopener">App embed’i aç</a>
+                <a class="uc-btn uc-btn-secondary" asp-page="/Carts">Sepetleri yönet</a>
+                <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Kurulum sihirbazı</a>
             </div>
         </div>
     </div>
 
     <div class="uc-grid uc-grid-2">
         <div class="uc-card">
-            <div class="uc-card-hd"><h2>Discounts</h2><a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Discounts">Manage all discounts</a></div>
-            <div class="uc-card-bd" style="color:var(--uc-muted)">Create triggered rewards (free shipping, % off, free gifts) like Upcart Discounts.</div>
+            <div class="uc-card-hd"><h2>İndirimler</h2><a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Discounts">Tüm indirimleri yönet</a></div>
+            <div class="uc-card-bd" style="color:var(--uc-muted)">Tetiklemeli ödüller oluşturun (ücretsiz kargo, % indirim, hediye ürün).</div>
         </div>
         <div class="uc-card">
-            <div class="uc-card-hd"><h2>Setup guide</h2><span class="uc-badge uc-badge-live">1 of 5</span></div>
+            <div class="uc-card-hd"><h2>Kurulum rehberi</h2><span class="uc-badge uc-badge-live">1 / 5</span></div>
             <div class="uc-card-bd">
                 <ol class="uc-steps">
-                    <li>Run setup wizard (style + modules)</li>
-                    <li>Enable <strong>UpCard Bridge</strong> app embed</li>
-                    <li>Publish a cart</li>
-                    <li>Create a discount rule</li>
-                    <li>Turn on sticky cart</li>
+                    <li>Kurulum sihirbazını çalıştırın (stil + modüller)</li>
+                    <li><strong>Upcart AlpMi Bridge</strong> app embed’ini etkinleştirin</li>
+                    <li>Bir sepeti yayınlayın</li>
+                    <li>Bir indirim kuralı oluşturun</li>
+                    <li>Yapışkan sepeti açın</li>
                 </ol>
             </div>
         </div>
     </div>
 
     <div class="uc-grid uc-grid-4" style="margin-top:16px">
-        <div class="uc-card uc-metric"><div class="label">Cart opens</div><div class="value">@Model.Opens</div></div>
-        <div class="uc-card uc-metric"><div class="label">Upsell adds</div><div class="value">@Model.Upsells</div></div>
-        <div class="uc-card uc-metric"><div class="label">Checkouts</div><div class="value">@Model.Checkouts</div></div>
-        <div class="uc-card uc-metric"><div class="label">Upsell CTR</div><div class="value">@Model.UpsellCtr%</div></div>
+        <div class="uc-card uc-metric"><div class="label">Sepet açılışı</div><div class="value">@Model.Opens</div></div>
+        <div class="uc-card uc-metric"><div class="label">Ek satış ekleme</div><div class="value">@Model.Upsells</div></div>
+        <div class="uc-card uc-metric"><div class="label">Ödeme</div><div class="value">@Model.Checkouts</div></div>
+        <div class="uc-card uc-metric"><div class="label">Ek satış CTR</div><div class="value">@Model.UpsellCtr%</div></div>
     </div>
 }

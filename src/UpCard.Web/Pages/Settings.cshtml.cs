@@ -55,7 +55,7 @@ public class SettingsModel : UpCardPageModel
         try { node["translations"] = JsonNode.Parse(TranslationsJson); }
         catch { Message = "Translations JSON geçersiz"; return Page(); }
         await _carts.UpdateCartConfigAsync(CartId, node.ToJsonString());
-        Message = "Settings saved";
+        Message = "Ayarlar kaydedildi";
         return Page();
     }
 }

@@ -1,15 +1,15 @@
 @page
 @model DiscountsModel
 @{
-    ViewData["Title"] = "Discounts";
+    ViewData["Title"] = "İndirimler";
 }
 
 <div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
     <div>
-        <h1 class="uc-page-title" style="margin:0">Discounts</h1>
-        <p class="uc-page-sub" style="margin:6px 0 0">Triggered rewards · free shipping · % off · free gifts</p>
+        <h1 class="uc-page-title" style="margin:0">İndirimler</h1>
+        <p class="uc-page-sub" style="margin:6px 0 0">Tetiklemeli ödüller · ücretsiz kargo · % indirim · hediye</p>
     </div>
-    <a class="uc-btn uc-btn-primary" asp-page="/DiscountEdit">+ Create discount</a>
+    <a class="uc-btn uc-btn-primary" asp-page="/DiscountEdit">+ İndirim oluştur</a>
 </div>
 
 @if (!string.IsNullOrEmpty(Model.Message))
@@ -18,15 +18,15 @@
 }
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Live discounts</h2></div>
+    <div class="uc-card-hd"><h2>Canlı indirimler</h2></div>
     @if (!Model.Live.Any())
     {
-        <div class="uc-card-bd" style="color:var(--uc-muted)">No live discounts. Publish a discount from your drafts to make it live.</div>
+        <div class="uc-card-bd" style="color:var(--uc-muted)">Canlı indirim yok. Taslaktan yayınlayarak canlıya alın.</div>
     }
     else
     {
         <table class="uc-table">
-            <thead><tr><th>Name</th><th>Triggers</th><th>Rewards</th><th></th></tr></thead>
+            <thead><tr><th>Ad</th><th>Tetikleyiciler</th><th>Ödüller</th><th></th></tr></thead>
             <tbody>
             @foreach (var r in Model.Live)
             {
@@ -35,8 +35,8 @@
                     <td>@DiscountsModel.TriggerSummary(r)</td>
                     <td><span class="uc-badge uc-badge-live">@DiscountsModel.RewardSummary(r)</span></td>
                     <td class="uc-actions">
-                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Edit</a>
-                        <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Delete</button></form>
+                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Düzenle</a>
+                        <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Sil</button></form>
                     </td>
                 </tr>
             }
@@ -46,15 +46,15 @@
 </div>
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Draft discounts</h2></div>
+    <div class="uc-card-hd"><h2>Taslak indirimler</h2></div>
     @if (!Model.Draft.Any())
     {
-        <div class="uc-card-bd" style="color:var(--uc-muted)">No draft discounts. Discounts created here won't go live until you publish them.</div>
+        <div class="uc-card-bd" style="color:var(--uc-muted)">Taslak indirim yok. Burada oluşturulanlar yayınlanana kadar canlıya geçmez.</div>
     }
     else
     {
         <table class="uc-table">
-            <thead><tr><th>Name</th><th>Triggers</th><th>Rewards</th><th></th></tr></thead>
+            <thead><tr><th>Ad</th><th>Tetikleyiciler</th><th>Ödüller</th><th></th></tr></thead>
             <tbody>
             @foreach (var r in Model.Draft)
             {
@@ -64,9 +64,9 @@
                     <td><span class="uc-badge uc-badge-draft">@DiscountsModel.RewardSummary(r)</span></td>
                     <td>
                         <div class="uc-actions">
-                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Edit</a>
-                            <form method="post" asp-page-handler="Publish"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-primary uc-btn-sm">Publish</button></form>
-                            <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Delete</button></form>
+                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/DiscountEdit" asp-route-id="@r.Id">Düzenle</a>
+                            <form method="post" asp-page-handler="Publish"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-primary uc-btn-sm">Yayınla</button></form>
+                            <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@r.Id" /><button class="uc-btn uc-btn-danger uc-btn-sm">Sil</button></form>
                         </div>
                     </td>
                 </tr>
@@ -77,11 +77,11 @@
 </div>
 
 <div class="uc-card">
-    <div class="uc-card-hd"><h2>Discount combinations</h2></div>
+    <div class="uc-card-hd"><h2>İndirim kombinasyonları</h2></div>
     <div class="uc-card-bd">
-        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Product discounts</strong> — applies alongside other product-level discounts</label>
-        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Order discounts</strong> — product discounts first, then order-level</label>
-        <label class="uc-check" style="display:block"><input type="checkbox" disabled /> <strong>Shipping discounts</strong> — combine with free shipping for largest eligible discount</label>
-        <p class="hint" style="margin-top:12px;color:var(--uc-muted);font-size:12px">Combination toggles sync to Shopify Discount API in a later release.</p>
+        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Ürün indirimleri</strong> — diğer ürün indirimleriyle birlikte uygulanır</label>
+        <label class="uc-check" style="display:block;margin-bottom:10px"><input type="checkbox" disabled /> <strong>Sipariş indirimleri</strong> — önce ürün, sonra sipariş seviyesi</label>
+        <label class="uc-check" style="display:block"><input type="checkbox" disabled /> <strong>Kargo indirimleri</strong> — ücretsiz kargo ile en uygun indirimi birleştir</label>
+        <p class="hint" style="margin-top:12px;color:var(--uc-muted);font-size:12px">Kombinasyon ayarları sonraki sürümde Shopify İndirim API’sine bağlanacak.</p>
     </div>
 </div>

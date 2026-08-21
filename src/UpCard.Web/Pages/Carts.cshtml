@@ -1,19 +1,19 @@
 @page
 @model CartsModel
 @{
-    ViewData["Title"] = "Carts";
+    ViewData["Title"] = "Sepetler";
     var live = Model.Carts.Where(c => c.Status == "live").ToList();
     var draft = Model.Carts.Where(c => c.Status != "live").ToList();
 }
 
 <div class="uc-actions" style="justify-content:space-between;margin-bottom:8px">
     <div>
-        <h1 class="uc-page-title" style="margin:0">Carts</h1>
-        <p class="uc-page-sub" style="margin:6px 0 0">Manage live &amp; draft cart experiences</p>
+        <h1 class="uc-page-title" style="margin:0">Sepetler</h1>
+        <p class="uc-page-sub" style="margin:6px 0 0">Canlı ve taslak sepet deneyimlerini yönetin</p>
     </div>
     <div class="uc-actions">
-        <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Setup wizard</a>
-        <a class="uc-btn uc-btn-secondary" asp-page="/Index">Welcome</a>
+        <a class="uc-btn uc-btn-secondary" asp-page="/Onboarding">Kurulum sihirbazı</a>
+        <a class="uc-btn uc-btn-secondary" asp-page="/Index">Ana sayfa</a>
     </div>
 </div>
 
@@ -23,37 +23,37 @@
 }
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Create cart</h2></div>
+    <div class="uc-card-hd"><h2>Sepet oluştur</h2></div>
     <div class="uc-card-bd">
         <form method="post" asp-page-handler="Create" class="uc-actions" style="align-items:end">
             <div class="uc-field" style="margin:0;min-width:260px">
-                <label>Name</label>
-                <input class="uc-input" name="name" value="Untitled cart" />
+                <label>Ad</label>
+                <input class="uc-input" name="name" value="Adsız sepet" />
             </div>
-            <button class="uc-btn uc-btn-primary" type="submit">+ Create</button>
+            <button class="uc-btn uc-btn-primary" type="submit">+ Oluştur</button>
         </form>
     </div>
 </div>
 
 <div class="uc-card" style="margin-bottom:16px">
-    <div class="uc-card-hd"><h2>Live carts</h2></div>
+    <div class="uc-card-hd"><h2>Canlı sepetler</h2></div>
     @if (!live.Any())
     {
-        <div class="uc-card-bd" style="color:var(--uc-muted)">No live carts configured. Publish a draft to make it live.</div>
+        <div class="uc-card-bd" style="color:var(--uc-muted)">Canlı sepet yok. Taslağı yayınlayarak canlıya alın.</div>
     }
     else
     {
         <table class="uc-table">
-            <thead><tr><th>Name</th><th>Traffic</th><th>Updated</th><th></th></tr></thead>
+            <thead><tr><th>Ad</th><th>Trafik</th><th>Güncellendi</th><th></th></tr></thead>
             <tbody>
             @foreach (var c in live)
             {
                 <tr>
-                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-live">live</span></td>
+                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-live">canlı</span></td>
                     <td>@c.TrafficAllocation%</td>
                     <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
                     <td class="uc-actions">
-                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Edit</a>
+                        <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Düzenle</a>
                     </td>
                 </tr>
             }
@@ -63,27 +63,27 @@
 </div>
 
 <div class="uc-card">
-    <div class="uc-card-hd"><h2>Draft carts</h2></div>
+    <div class="uc-card-hd"><h2>Taslak sepetler</h2></div>
     @if (!draft.Any())
     {
-        <div class="uc-card-bd" style="color:var(--uc-muted)">No draft carts.</div>
+        <div class="uc-card-bd" style="color:var(--uc-muted)">Taslak sepet yok.</div>
     }
     else
     {
         <table class="uc-table">
-            <thead><tr><th>Name</th><th>Updated</th><th></th></tr></thead>
+            <thead><tr><th>Ad</th><th>Güncellendi</th><th></th></tr></thead>
             <tbody>
             @foreach (var c in draft)
             {
                 <tr>
-                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-draft">draft</span></td>
+                    <td><strong>@c.Name</strong> <span class="uc-badge uc-badge-draft">taslak</span></td>
                     <td>@c.UpdatedAt.ToLocalTime().ToString("g")</td>
                     <td>
                         <div class="uc-actions">
-                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Edit</a>
+                            <a class="uc-btn uc-btn-secondary uc-btn-sm" asp-page="/Editor" asp-route-cartId="@c.Id">Düzenle</a>
                             <form method="post" asp-page-handler="Publish">
                                 <input type="hidden" name="cartId" value="@c.Id" />
-                                <button class="uc-btn uc-btn-primary uc-btn-sm" type="submit">Publish</button>
+                                <button class="uc-btn uc-btn-primary uc-btn-sm" type="submit">Yayınla</button>
                             </form>
                         </div>
                     </td>

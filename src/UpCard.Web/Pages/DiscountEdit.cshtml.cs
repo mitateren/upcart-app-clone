@@ -94,7 +94,7 @@ public class DiscountEditModel : UpCardPageModel
             _db.DiscountRules.Add(rule);
         }
 
-        rule.Name = string.IsNullOrWhiteSpace(Title) ? "Untitled discount" : Title;
+        rule.Name = string.IsNullOrWhiteSpace(Title) ? "Adsız indirim" : Title;
         rule.RuleType = RewardType;
         rule.Enabled = publish;
         rule.ConditionsJson = conditions.ToJsonString();

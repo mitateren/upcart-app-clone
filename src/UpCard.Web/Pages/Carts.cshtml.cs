@@ -25,7 +25,7 @@ public class CartsModel : UpCardPageModel
         var gate = RequireShop();
         if (gate != null) return gate;
         await _carts.CreateCartAsync(ShopDomain, string.IsNullOrWhiteSpace(name) ? "New cart" : name);
-        Message = "Cart created";
+        Message = "Sepet oluşturuldu";
         (_, Carts) = await _carts.ListCartsAsync(ShopDomain);
         return Page();
     }
@@ -35,7 +35,7 @@ public class CartsModel : UpCardPageModel
         var gate = RequireShop();
         if (gate != null) return gate;
         await _carts.PublishCartAsync(ShopDomain, cartId);
-        Message = "Published";
+        Message = "Yayınlandı";
         (_, Carts) = await _carts.ListCartsAsync(ShopDomain);
         return Page();
     }
